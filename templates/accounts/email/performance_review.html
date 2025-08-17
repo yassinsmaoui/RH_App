@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #7B1FA2;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .review-details {
+            background-color: #f3e5f5;
+            border-left: 6px solid #7B1FA2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .score-summary {
+            background-color: #e8eaf6;
+            border-left: 6px solid #3f51b5;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .goals-section {
+            background-color: #e0f2f1;
+            border-left: 6px solid #009688;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #7B1FA2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+        .score-bar {
+            background-color: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+        .score-fill {
+            height: 100%;
+            background-color: #7B1FA2;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Performance Review {{ review.review_type|title }}</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ review.employee.get_full_name }},</p>
+        
+        <p>{% if review.status == 'COMPLETED' %}
+            Your performance review has been completed.
+        {% else %}
+            A new performance review has been scheduled for you.
+        {% endif %}</p>
+        
+        <div class="review-details">
+            <h2>Review Information</h2>
+            <table>
+                <tr>
+                    <th>Review Period</th>
+                    <td>{% date_range_text review.period_start review.period_end %}</td>
+                </tr>
+                <tr>
+                    <th>Review Type</th>
+                    <td>{{ review.review_type|title }}</td>
+                </tr>
+                <tr>
+                    <th>Reviewer</th>
+                    <td>{{ review.reviewer.get_full_name }}</td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>{{ review.status|title }}</td>
+                </tr>
+                {% if review.due_date %}
+                <tr>
+                    <th>Due Date</th>
+                    <td>{{ review.due_date|date:"F d, Y" }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        
+        {% if review.status == 'COMPLETED' %}
+        <div class="score-summary">
+            <h2>Performance Scores</h2>
+            {% for score in review.scores.all %}
+            <div style="margin-bottom: 15px;">
+                <p style="margin-bottom: 5px;">
+                    <strong>{{ score.criteria.name }}</strong>
+                    <span style="float: right;">{{ score.score|percentage }}</span>
+                </p>
+                <div class="score-bar">
+                    <div class="score-fill" style="width: {{ score.score|percentage }}"></div>
+                </div>
+                {% if score.comments %}
+                <p style="font-size: 14px; color: #666; margin-top: 5px;">
+                    {{ score.comments }}
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <table>
+                <tr>
+                    <th>Overall Score</th>
+                    <td>{{ review.overall_score|percentage }}</td>
+                </tr>
+                {% if review.comments %}
+                <tr>
+                    <th>General Comments</th>
+                    <td>{{ review.comments }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        
+        {% if review.goals.exists %}
+        <div class="goals-section">
+            <h2>Goals and Objectives</h2>
+            <ul>
+            {% for goal in review.goals.all %}
+                <li>
+                    <strong>{{ goal.title }}</strong> ({{ goal.progress|percentage }} complete)
+                    {% if goal.description %}
+                    <br>
+                    <span style="font-size: 14px; color: #666;">{{ goal.description }}</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% endif %}
+        
+        {% if review.status != 'COMPLETED' %}
+        <p>Please note:</p>
+        <ul>
+            <li>Review your performance objectives and goals</li>
+            <li>Prepare any necessary documentation or self-assessment</li>
+            <li>Schedule a meeting with your reviewer if required</li>
+            <li>Submit your self-assessment before the due date</li>
+        </ul>
+        {% endif %}
+        
+        <a href="{{ review_details_url }}" class="button">View Review Details</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you have any questions, please contact your supervisor or the HR department.</p>
+        <p>&copy; {{ current_year }} HR Management System. All rights reserved.</p>
+    </div>
+</body>
+</html>

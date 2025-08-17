@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #009688, #4caf50);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .request-details {
+            background-color: #e0f2f1;
+            border-left: 6px solid #009688;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .status-details {
+            background-color: #e8f5e9;
+            border-left: 6px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .policy-details {
+            background-color: #fff3e0;
+            border-left: 6px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #009688, #4caf50);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        .status-approved {
+            background-color: #e8f5e9;
+            color: #4caf50;
+        }
+        .status-pending {
+            background-color: #fff3e0;
+            color: #ff9800;
+        }
+        .status-rejected {
+            background-color: #ffebee;
+            color: #f44336;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+        }
+        .timeline {
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #009688;
+        }
+        .timeline-item:after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 15px;
+            width: 2px;
+            height: calc(100% + 5px);
+            background-color: #009688;
+        }
+        .timeline-item:last-child:after {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏠 Remote Work Request</h1>
+        <p>Request #{{ request.id }}</p>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ recipient.get_full_name }},</p>
+        
+        {% if is_requester %}
+        <p>Your remote work request has been {{ request.status }}.</p>
+        {% else %}
+        <p>A new remote work request has been submitted for your review.</p>
+        {% endif %}
+        
+        <div class="request-details">
+            <h2>Request Details</h2>
+            <div class="info-card">
+                <p>
+                    <strong>Status:</strong>
+                    <span class="status-badge status-{{ request.status|lower }}">{{ request.status }}</span>
+                </p>
+                
+                <h3>Request Information</h3>
+                <ul>
+                    <li><strong>Requester:</strong> {{ requester.get_full_name }}</li>
+                    <li><strong>Department:</strong> {{ requester.department }}</li>
+                    <li><strong>Position:</strong> {{ requester.position }}</li>
+                    <li><strong>Request Date:</strong> {{ request.submission_date|date:"F d, Y" }}</li>
+                </ul>
+                
+                <h3>Work Schedule</h3>
+                <ul>
+                    <li><strong>Start Date:</strong> {{ request.start_date|date:"F d, Y" }}</li>
+                    <li><strong>End Date:</strong> {{ request.end_date|date:"F d, Y" }}</li>
+                    <li><strong>Work Hours:</strong> {{ request.work_hours }}</li>
+                    <li><strong>Time Zone:</strong> {{ request.time_zone }}</li>
+                </ul>
+                
+                {% if request.reason %}
+                <h3>Reason for Request</h3>
+                <p>{{ request.reason }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if request.status == 'APPROVED' %}
+        <div class="status-details">
+            <h2>Approval Details</h2>
+            <div class="info-card">
+                <h3>Approved By</h3>
+                <ul>
+                    <li><strong>Name:</strong> {{ approver.get_full_name }}</li>
+                    <li><strong>Position:</strong> {{ approver.position }}</li>
+                    <li><strong>Approval Date:</strong> {{ request.approval_date|date:"F d, Y" }}</li>
+                </ul>
+                
+                {% if request.approval_notes %}
+                <h3>Approval Notes</h3>
+                <p>{{ request.approval_notes }}</p>
+                {% endif %}
+                
+                <h3>Remote Work Requirements</h3>
+                <ul class="checklist">
+                    <li>Maintain regular communication with team members</li>
+                    <li>Attend all scheduled virtual meetings</li>
+                    <li>Complete daily work logs</li>
+                    <li>Ensure secure internet connection</li>
+                    <li>Follow information security protocols</li>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if request.status == 'REJECTED' %}
+        <div class="status-details">
+            <h2>Rejection Details</h2>
+            <div class="info-card">
+                <h3>Rejected By</h3>
+                <ul>
+                    <li><strong>Name:</strong> {{ rejector.get_full_name }}</li>
+                    <li><strong>Position:</strong> {{ rejector.position }}</li>
+                    <li><strong>Rejection Date:</strong> {{ request.rejection_date|date:"F d, Y" }}</li>
+                </ul>
+                
+                {% if request.rejection_reason %}
+                <h3>Reason for Rejection</h3>
+                <p>{{ request.rejection_reason }}</p>
+                {% endif %}
+                
+                {% if request.resubmission_guidelines %}
+                <h3>Resubmission Guidelines</h3>
+                <p>{{ request.resubmission_guidelines }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="policy-details">
+            <h2>Remote Work Policy</h2>
+            <div class="info-card">
+                <h3>Key Guidelines</h3>
+                <ul>
+                    <li><strong>Work Hours:</strong> {{ policy.work_hours }}</li>
+                    <li><strong>Communication:</strong> {{ policy.communication_requirements }}</li>
+                    <li><strong>Equipment:</strong> {{ policy.equipment_guidelines }}</li>
+                    <li><strong>Security:</strong> {{ policy.security_requirements }}</li>
+                </ul>
+                
+                <h3>Remote Work Setup</h3>
+                <ul class="checklist">
+                    {% for requirement in setup_requirements %}
+                    <li>{{ requirement }}</li>
+                    {% endfor %}
+                </ul>
+                
+                <a href="{{ policy_link }}" class="button">View Full Policy</a>
+            </div>
+        </div>
+        
+        {% if request.status == 'APPROVED' %}
+        <div class="request-details">
+            <h2>Next Steps</h2>
+            <div class="info-card">
+                <h3>Setup Timeline</h3>
+                <ul class="timeline">
+                    {% for step in setup_timeline %}
+                    <li class="timeline-item">
+                        <strong>{{ step.title }}</strong><br>
+                        {{ step.date|date:"F d, Y" }}<br>
+                        <small>{{ step.description }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Required Actions</h3>
+                <ol>
+                    <li>Complete remote work agreement</li>
+                    <li>Set up remote workspace</li>
+                    <li>Test communication tools</li>
+                    <li>Review security protocols</li>
+                    <li>Update calendar availability</li>
+                </ol>
+                
+                <a href="{{ setup_checklist_link }}" class="button">View Setup Checklist</a>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="status-details">
+            <h2>Support Resources</h2>
+            <div class="info-card">
+                <h3>IT Support</h3>
+                <p>
+                    <strong>Contact:</strong> {{ it_support.name }}<br>
+                    Email: {{ it_support.email }}<br>
+                    Phone: {{ it_support.phone }}
+                </p>
+                
+                <h3>HR Support</h3>
+                <p>
+                    <strong>Contact:</strong> {{ hr_support.name }}<br>
+                    Email: {{ hr_support.email }}<br>
+                    Phone: {{ hr_support.phone }}
+                </p>
+                
+                <h3>Helpful Links</h3>
+                <ul>
+                    <li><a href="{{ remote_work_guide_link }}">Remote Work Guide</a></li>
+                    <li><a href="{{ equipment_request_link }}">Equipment Request Form</a></li>
+                    <li><a href="{{ faq_link }}">Frequently Asked Questions</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>For any questions or concerns, please contact the HR department.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

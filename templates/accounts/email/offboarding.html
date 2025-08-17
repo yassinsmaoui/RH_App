@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #5c6bc0, #3f51b5);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .overview-section {
+            background-color: #e8eaf6;
+            border-left: 6px solid #3f51b5;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .checklist-section {
+            background-color: #f3e5f5;
+            border-left: 6px solid #9c27b0;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .resources-section {
+            background-color: #e1f5fe;
+            border-left: 6px solid #03a9f4;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #5c6bc0, #3f51b5);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-tag {
+            display: inline-block;
+            background-color: #c5cae9;
+            color: #283593;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .timeline {
+            position: relative;
+            margin: 20px 0;
+        }
+        .timeline-item {
+            margin-left: 20px;
+            padding: 15px;
+            border-left: 2px solid #3f51b5;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: #3f51b5;
+            position: absolute;
+            left: -7px;
+            top: 20px;
+            border-radius: 50%;
+        }
+        .checklist {
+            list-style-type: none;
+            padding: 0;
+        }
+        .checklist-item {
+            background-color: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #3f51b5;
+        }
+        .important-note {
+            background-color: #e8eaf6;
+            border-left: 4px solid #3f51b5;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .handover-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .handover-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+        .resource-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .resource-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Offboarding Process 🔚</h1>
+        <p>Last Working Day: {{ last_working_date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="overview-section">
+            <h2>Offboarding Overview</h2>
+            <div class="info-card">
+                <h3>Employee Information</h3>
+                <div class="important-note">
+                    <ul>
+                        <li><strong>Employee Name:</strong> {{ employee_name }}</li>
+                        <li><strong>Employee ID:</strong> {{ employee_id }}</li>
+                        <li><strong>Department:</strong> {{ department }}</li>
+                        <li><strong>Position:</strong> {{ position }}</li>
+                        <li><strong>Manager:</strong> {{ manager_name }}</li>
+                        <li><strong>Office Location:</strong> {{ office_location }}</li>
+                    </ul>
+                </div>
+                
+                <h3>Important Dates</h3>
+                <ul>
+                    <li><strong>Notice Date:</strong> {{ notice_date|date:"F d, Y" }}</li>
+                    <li><strong>Last Working Day:</strong> {{ last_working_date|date:"F d, Y" }}</li>
+                    <li><strong>Exit Interview:</strong> {{ exit_interview_date|date:"F d, Y" }} at {{ exit_interview_time }}</li>
+                    {% if clearance_date %}
+                    <li><strong>Clearance Due:</strong> {{ clearance_date|date:"F d, Y" }}</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="checklist-section">
+            <h2>Offboarding Checklist</h2>
+            <div class="info-card">
+                <h3>Handover Items</h3>
+                <div class="handover-grid">
+                    {% for item in handover_items %}
+                    <div class="handover-card">
+                        <h4>{{ item.title }}</h4>
+                        <p>{{ item.description }}</p>
+                        <p><strong>Assigned to:</strong> {{ item.assigned_to }}</p>
+                        <p><strong>Due Date:</strong> {{ item.due_date|date:"F d, Y" }}</p>
+                        <span class="status-tag">{{ item.status }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <h3>Equipment Return</h3>
+                <ul class="checklist">
+                    {% for item in equipment_return %}
+                    <li class="checklist-item">
+                        <h4>{{ item.name }}</h4>
+                        <p><strong>Asset Tag:</strong> {{ item.asset_tag }}</p>
+                        <p><strong>Return Location:</strong> {{ item.return_location }}</p>
+                        <p><strong>Due Date:</strong> {{ item.due_date|date:"F d, Y" }}</p>
+                        <span class="status-tag">{{ item.status }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>System Access</h3>
+                <div class="important-note">
+                    <p>The following system access will be deactivated on {{ access_deactivation_date|date:"F d, Y" }}:</p>
+                    <ul>
+                        {% for system in system_access %}
+                        <li>
+                            <strong>{{ system.name }}</strong>
+                            <br>
+                            Status: <span class="status-tag">{{ system.status }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="resources-section">
+            <h2>Important Information</h2>
+            <div class="info-card">
+                <h3>Final Documentation</h3>
+                <div class="resource-list">
+                    {% for document in final_documents %}
+                    <div class="resource-card">
+                        <h4>{{ document.title }}</h4>
+                        <p>{{ document.description }}</p>
+                        <p><strong>Due Date:</strong> {{ document.due_date|date:"F d, Y" }}</p>
+                        <a href="{{ document.link }}" class="button">View Document</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <h3>Benefits Information</h3>
+                <div class="important-note">
+                    <ul>
+                        {% for benefit in benefits_info %}
+                        <li>
+                            <strong>{{ benefit.type }}</strong>
+                            <br>
+                            {{ benefit.description }}
+                            <br>
+                            <strong>End Date:</strong> {{ benefit.end_date|date:"F d, Y" }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <h3>Support Contacts</h3>
+                <ul>
+                    {% for contact in support_contacts %}
+                    <li>
+                        <strong>{{ contact.department }}</strong>
+                        <br>
+                        Contact: {{ contact.name }}
+                        <br>
+                        Email: {{ contact.email }}
+                        <br>
+                        Phone: {{ contact.phone }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Next Steps</h3>
+                <ol>
+                    {% for step in next_steps %}
+                    <li>
+                        <strong>{{ step.title }}</strong>
+                        <br>
+                        {{ step.description }}
+                        {% if step.deadline %}
+                        <br>
+                        <strong>Complete by:</strong> {{ step.deadline|date:"F d, Y" }}
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ol>
+                
+                <a href="{{ offboarding_portal_link }}" class="button">Visit Offboarding Portal</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>{{ hr_department_name }}</p>
+        <p>Contact: {{ hr_email }}</p>
+        <p>Support: {{ support_contact }}</p>
+        <p>Thank you for your contributions to {{ company_name }}. We wish you the best in your future endeavors.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

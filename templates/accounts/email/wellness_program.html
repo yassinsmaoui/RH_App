@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #00796b;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .program-details {
+            background-color: #e0f2f1;
+            border-left: 6px solid #00796b;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .benefits {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .activities {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .resources {
+            background-color: #f3e5f5;
+            border-left: 6px solid #9c27b0;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #00796b;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+        .activity-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .progress-bar {
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            padding: 3px;
+            margin: 5px 0;
+        }
+        .progress-bar-fill {
+            background-color: #00796b;
+            height: 20px;
+            border-radius: 3px;
+            transition: width 500ms ease-in-out;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 10px;
+            flex: 1;
+            min-width: 120px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-box .number {
+            font-size: 24px;
+            color: #00796b;
+            font-weight: bold;
+        }
+        .stat-box .label {
+            font-size: 14px;
+            color: #666;
+        }
+        .reminder {
+            background-color: #fff3e0;
+            border-left: 6px solid #f57c00;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #e0f2f1;
+            color: #00796b;
+            border-radius: 15px;
+            margin: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌿 Wellness Program Update 🌿</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>We're excited to share updates about our Employee Wellness Program and your progress towards better health and well-being!</p>
+        
+        <div class="program-details">
+            <h2>Your Wellness Journey</h2>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="number">{{ stats.wellness_points }}</div>
+                    <div class="label">Wellness Points</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number">{{ stats.activities_completed }}</div>
+                    <div class="label">Activities Completed</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number">{{ stats.rewards_earned }}</div>
+                    <div class="label">Rewards Earned</div>
+                </div>
+            </div>
+            
+            <h3>Current Level: {{ wellness_level.title }}</h3>
+            <div class="progress-bar">
+                <div class="progress-bar-fill" style="width: {{ wellness_level.progress }}%"></div>
+            </div>
+            <p><small>{{ wellness_level.points_needed }} points needed for next level</small></p>
+        </div>
+        
+        <div class="activities">
+            <h2>Recent Activities</h2>
+            {% for activity in recent_activities %}
+            <div class="activity-card">
+                <h3>{{ activity.title }}</h3>
+                <p>{{ activity.description }}</p>
+                <p><strong>Points Earned:</strong> {{ activity.points }}</p>
+                <p><strong>Completed:</strong> {{ activity.completion_date|date:"F d, Y" }}</p>
+                {% if activity.achievement %}
+                <span class="badge">{{ activity.achievement }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="benefits">
+            <h2>Available Benefits</h2>
+            {% for benefit in available_benefits %}
+            <div class="activity-card">
+                <h3>{{ benefit.title }}</h3>
+                <p>{{ benefit.description }}</p>
+                {% if benefit.points_required %}
+                <p><strong>Points Required:</strong> {{ benefit.points_required }}</p>
+                {% endif %}
+                {% if benefit.expiry_date %}
+                <p><em>Available until: {{ benefit.expiry_date|date:"F d, Y" }}</em></p>
+                {% endif %}
+                {% if benefit.is_available %}
+                <a href="{{ benefit.claim_url }}" class="button">Claim Benefit</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="resources">
+            <h2>Wellness Resources</h2>
+            <div class="activity-card">
+                <h3>Upcoming Events</h3>
+                <ul>
+                    {% for event in upcoming_events %}
+                    <li>
+                        <strong>{{ event.title }}</strong><br>
+                        Date: {{ event.date|date:"F d, Y" }}<br>
+                        Time: {{ event.time|time:"g:i A" }}<br>
+                        {% if event.location %}
+                        Location: {{ event.location }}<br>
+                        {% endif %}
+                        <a href="{{ event.registration_url }}">Register Now</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="activity-card">
+                <h3>Health Tips</h3>
+                <ul>
+                    {% for tip in health_tips %}
+                    <li>{{ tip }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        {% if challenges %}
+        <div class="program-details">
+            <h2>Active Challenges</h2>
+            {% for challenge in challenges %}
+            <div class="activity-card">
+                <h3>{{ challenge.title }}</h3>
+                <p>{{ challenge.description }}</p>
+                <p><strong>Duration:</strong> {{ challenge.start_date|date:"F d" }} - {{ challenge.end_date|date:"F d, Y" }}</p>
+                <p><strong>Reward:</strong> {{ challenge.reward }}</p>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" style="width: {{ challenge.progress }}%"></div>
+                </div>
+                <p><small>Progress: {{ challenge.progress }}%</small></p>
+                {% if not challenge.joined %}
+                <a href="{{ challenge.join_url }}" class="button">Join Challenge</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="reminder">
+            <h3>Important Reminders</h3>
+            <ul>
+                <li>Complete your health assessment for bonus points</li>
+                <li>Schedule your annual wellness check-up</li>
+                <li>Track your daily activities in the wellness portal</li>
+                <li>Join upcoming wellness challenges</li>
+                <li>Use your wellness benefits before they expire</li>
+            </ul>
+        </div>
+        
+        <p>Available Actions:</p>
+        <ul>
+            <li>View detailed activity history</li>
+            <li>Track your wellness goals</li>
+            <li>Register for upcoming events</li>
+            <li>Redeem wellness rewards</li>
+            <li>Connect with wellness coaches</li>
+        </ul>
+        
+        <a href="{{ wellness_portal_url }}" class="button">Access Wellness Portal</a>
+        
+        {% if mobile_app %}
+        <p><small>Download our wellness app: 
+            {% for platform in mobile_app.platforms %}
+            <a href="{{ platform.download_url }}">{{ platform.name }}</a>{% if not forloop.last %} | {% endif %}
+            {% endfor %}
+        </small></p>
+        {% endif %}
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>For questions about the wellness program, contact the Wellness Team.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

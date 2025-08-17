@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #00897b, #26a69a);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .welcome-section {
+            background-color: #e0f2f1;
+            border-left: 6px solid #00897b;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .setup-section {
+            background-color: #e8f5e9;
+            border-left: 6px solid #43a047;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .resources-section {
+            background-color: #f3e5f5;
+            border-left: 6px solid #8e24aa;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #00897b, #26a69a);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-tag {
+            display: inline-block;
+            background-color: #b2dfdb;
+            color: #00695c;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .timeline {
+            position: relative;
+            margin: 20px 0;
+        }
+        .timeline-item {
+            margin-left: 20px;
+            padding: 15px;
+            border-left: 2px solid #00897b;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: #00897b;
+            position: absolute;
+            left: -7px;
+            top: 20px;
+            border-radius: 50%;
+        }
+        .checklist {
+            list-style-type: none;
+            padding: 0;
+        }
+        .checklist-item {
+            background-color: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #00897b;
+        }
+        .important-note {
+            background-color: #e0f2f1;
+            border-left: 4px solid #00897b;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .team-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .resource-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .resource-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Welcome to {{ company_name }} 🎉</h1>
+        <p>Start Date: {{ start_date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="welcome-section">
+            <h2>Welcome Aboard!</h2>
+            <div class="info-card">
+                <h3>Employee Information</h3>
+                <div class="important-note">
+                    <ul>
+                        <li><strong>Employee Name:</strong> {{ employee_name }}</li>
+                        <li><strong>Employee ID:</strong> {{ employee_id }}</li>
+                        <li><strong>Department:</strong> {{ department }}</li>
+                        <li><strong>Position:</strong> {{ position }}</li>
+                        <li><strong>Manager:</strong> {{ manager_name }}</li>
+                        <li><strong>Office Location:</strong> {{ office_location }}</li>
+                    </ul>
+                </div>
+                
+                <h3>First Day Information</h3>
+                <ul>
+                    <li><strong>Arrival Time:</strong> {{ arrival_time }}</li>
+                    <li><strong>Meeting Point:</strong> {{ meeting_point }}</li>
+                    <li><strong>Contact Person:</strong> {{ contact_person }}</li>
+                    <li><strong>Contact Number:</strong> {{ contact_number }}</li>
+                </ul>
+                
+                <h3>Your Team</h3>
+                <div class="team-grid">
+                    {% for member in team_members %}
+                    <div class="team-card">
+                        <h4>{{ member.name }}</h4>
+                        <p>{{ member.position }}</p>
+                        <p>{{ member.email }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="setup-section">
+            <h2>Getting Started</h2>
+            <div class="info-card">
+                <h3>Onboarding Timeline</h3>
+                <div class="timeline">
+                    {% for event in onboarding_timeline %}
+                    <div class="timeline-item">
+                        <h4>{{ event.title }}</h4>
+                        <p>{{ event.description }}</p>
+                        <p><strong>Date:</strong> {{ event.date|date:"F d, Y" }}</p>
+                        {% if event.location %}
+                        <p><strong>Location:</strong> {{ event.location }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <h3>First Week Checklist</h3>
+                <ul class="checklist">
+                    {% for item in first_week_checklist %}
+                    <li class="checklist-item">
+                        <h4>{{ item.title }}</h4>
+                        <p>{{ item.description }}</p>
+                        {% if item.deadline %}
+                        <p><strong>Complete by:</strong> {{ item.deadline|date:"F d, Y" }}</p>
+                        {% endif %}
+                        {% if item.link %}
+                        <a href="{{ item.link }}" class="button">Complete Task</a>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>System Access</h3>
+                <div class="important-note">
+                    <h4>Login Credentials</h4>
+                    <ul>
+                        {% for system in system_access %}
+                        <li>
+                            <strong>{{ system.name }}</strong>
+                            <br>
+                            Username: {{ system.username }}
+                            <br>
+                            {% if system.temp_password %}
+                            Temporary Password: {{ system.temp_password }}
+                            <br>
+                            {% endif %}
+                            <a href="{{ system.login_url }}">Access System</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="resources-section">
+            <h2>Resources & Support</h2>
+            <div class="info-card">
+                <h3>Important Documents</h3>
+                <div class="resource-list">
+                    {% for document in important_documents %}
+                    <div class="resource-card">
+                        <h4>{{ document.title }}</h4>
+                        <p>{{ document.description }}</p>
+                        <a href="{{ document.link }}" class="button">View Document</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <h3>Training Resources</h3>
+                <ul class="checklist">
+                    {% for training in required_training %}
+                    <li class="checklist-item">
+                        <h4>{{ training.title }}</h4>
+                        <p>{{ training.description }}</p>
+                        <p><strong>Duration:</strong> {{ training.duration }}</p>
+                        <p><strong>Complete by:</strong> {{ training.deadline|date:"F d, Y" }}</p>
+                        <a href="{{ training.link }}" class="button">Start Training</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Support Contacts</h3>
+                <div class="important-note">
+                    <ul>
+                        {% for contact in support_contacts %}
+                        <li>
+                            <strong>{{ contact.department }}</strong>
+                            <br>
+                            Contact: {{ contact.name }}
+                            <br>
+                            Email: {{ contact.email }}
+                            <br>
+                            Phone: {{ contact.phone }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <a href="{{ onboarding_portal_link }}" class="button">Visit Onboarding Portal</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>{{ hr_department_name }}</p>
+        <p>Contact: {{ hr_email }}</p>
+        <p>Support: {{ support_contact }}</p>
+        <p>Welcome to the team! We're excited to have you join us.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

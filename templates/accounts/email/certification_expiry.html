@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #5c6bc0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .cert-details {
+            background-color: #e8eaf6;
+            border-left: 6px solid #5c6bc0;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .renewal-details {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .warning-details {
+            background-color: #ffebee;
+            border-left: 6px solid #c62828;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #5c6bc0;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .cert-item {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .status-active {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .status-expiring {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        .status-expired {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .note {
+            background-color: #fafafa;
+            padding: 10px;
+            border-left: 3px solid #9e9e9e;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        .timeline {
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #5c6bc0;
+        }
+        .timeline-item:after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 15px;
+            width: 2px;
+            height: calc(100% + 5px);
+            background-color: #5c6bc0;
+        }
+        .timeline-item:last-child:after {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎓 Certification Expiry Notice 🎓</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        {% if certification.status == "EXPIRED" %}
+        <p class="warning">Your {{ certification.name }} certification has expired!</p>
+        {% else %}
+        <p>This is to notify you that your certification will expire soon:</p>
+        {% endif %}
+        
+        <div class="cert-details">
+            <h2>Certification Details</h2>
+            <div class="cert-item">
+                <h3>
+                    {{ certification.name }}
+                    <span class="status-badge status-{{ certification.status|lower }}">
+                        {{ certification.status }}
+                    </span>
+                </h3>
+                <table>
+                    <tr>
+                        <th>Certificate ID</th>
+                        <td>{{ certification.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Issuing Authority</th>
+                        <td>{{ certification.issuer }}</td>
+                    </tr>
+                    <tr>
+                        <th>Issue Date</th>
+                        <td>{{ certification.issue_date|date:"F d, Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Expiry Date</th>
+                        <td>{{ certification.expiry_date|date:"F d, Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Time Remaining</th>
+                        <td>{{ certification.days_remaining }} days</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="renewal-details">
+            <h2>Renewal Information</h2>
+            <div class="cert-item">
+                <h3>Renewal Process</h3>
+                <ul class="timeline">
+                    {% for step in certification.renewal_steps %}
+                    <li class="timeline-item">
+                        <strong>{{ step.title }}</strong><br>
+                        {{ step.description }}<br>
+                        {% if step.deadline %}
+                        <small>Deadline: {{ step.deadline|date:"F d, Y" }}</small>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                {% if certification.renewal_cost %}
+                <div class="note">
+                    <strong>Estimated Cost:</strong> {{ certification.renewal_cost|currency }}<br>
+                    {% if certification.company_sponsored %}
+                    <small>Your renewal costs are covered by the company.</small>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if certification.training_required %}
+            <div class="cert-item">
+                <h3>Required Training</h3>
+                <table>
+                    <tr>
+                        <th>Course Name</th>
+                        <td>{{ certification.training.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Duration</th>
+                        <td>{{ certification.training.duration }}</td>
+                    </tr>
+                    <tr>
+                        <th>Format</th>
+                        <td>{{ certification.training.format }}</td>
+                    </tr>
+                    <tr>
+                        <th>Available Dates</th>
+                        <td>
+                            <ul>
+                                {% for date in certification.training.available_dates %}
+                                <li>{{ date|date:"F d, Y" }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if certification.impact %}
+        <div class="warning-details">
+            <h2>Impact of Non-Renewal</h2>
+            <ul>
+                {% for item in certification.impact %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        
+        <div class="cert-details">
+            <h2>Available Resources</h2>
+            <ul>
+                <li>Study materials and guides</li>
+                <li>Practice exams</li>
+                <li>Online training modules</li>
+                <li>Mentorship support</li>
+                <li>Exam preparation workshops</li>
+            </ul>
+        </div>
+        
+        <div class="cert-details">
+            <h2>Important Reminders</h2>
+            <ul>
+                <li>Keep a copy of your current certificate</li>
+                <li>Schedule renewal exam well in advance</li>
+                <li>Complete all prerequisites before the deadline</li>
+                <li>Update your professional profile after renewal</li>
+                <li>Submit renewal confirmation to HR</li>
+            </ul>
+        </div>
+        
+        <p>Available Actions:</p>
+        <ul>
+            <li>View certification details</li>
+            <li>Schedule renewal exam</li>
+            <li>Register for training</li>
+            <li>Download study materials</li>
+            <li>Request support</li>
+        </ul>
+        
+        <a href="{{ certification_portal_url }}" class="button">Access Certification Portal</a>
+        
+        {% if certification.support_contact %}
+        <div class="note">
+            <strong>Need Help?</strong><br>
+            Contact {{ certification.support_contact.name }}<br>
+            Email: {{ certification.support_contact.email }}<br>
+            Phone: {{ certification.support_contact.phone }}
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>For questions about certifications, contact your supervisor or HR Team.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

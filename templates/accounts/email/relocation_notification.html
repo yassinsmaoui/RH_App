@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #2196f3, #673ab7);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .relocation-details {
+            background-color: #e3f2fd;
+            border-left: 6px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .support-details {
+            background-color: #e8f5e9;
+            border-left: 6px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .timeline-details {
+            background-color: #fff3e0;
+            border-left: 6px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2196f3, #673ab7);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .timeline {
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #2196f3;
+        }
+        .timeline-item:after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 15px;
+            width: 2px;
+            height: calc(100% + 5px);
+            background-color: #2196f3;
+        }
+        .timeline-item:last-child:after {
+            display: none;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+        }
+        .location-comparison {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .location-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .location-card h3 {
+            color: #2196f3;
+            margin-bottom: 10px;
+        }
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .resource-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .resource-icon {
+            font-size: 24px;
+            color: #2196f3;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌎 Relocation Notification</h1>
+        <p>New Adventure Awaits!</p>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>We are pleased to inform you about your upcoming relocation opportunity with {{ company_name }}.</p>
+        
+        <div class="relocation-details">
+            <h2>Relocation Overview</h2>
+            <div class="info-card">
+                <div class="location-comparison">
+                    <div class="location-card">
+                        <h3>Current Location</h3>
+                        <p>{{ current_location.city }}, {{ current_location.country }}</p>
+                        <p>{{ current_location.office }}</p>
+                    </div>
+                    <div class="location-card">
+                        <h3>New Location</h3>
+                        <p>{{ new_location.city }}, {{ new_location.country }}</p>
+                        <p>{{ new_location.office }}</p>
+                    </div>
+                </div>
+                
+                <h3>Position Details</h3>
+                <p><strong>New Role:</strong> {{ new_position.title }}</p>
+                <p><strong>Department:</strong> {{ new_position.department }}</p>
+                <p><strong>Reporting To:</strong> {{ new_position.manager }}</p>
+                <p><strong>Start Date:</strong> {{ relocation_date|date:"F d, Y" }}</p>
+            </div>
+        </div>
+        
+        <div class="support-details">
+            <h2>Relocation Support Package</h2>
+            <div class="info-card">
+                <h3>Financial Support</h3>
+                <ul>
+                    {% for benefit in financial_benefits %}
+                    <li>
+                        <strong>{{ benefit.type }}:</strong> {{ benefit.amount|currency }}
+                        {% if benefit.description %}
+                        <br><small>{{ benefit.description }}</small>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Additional Benefits</h3>
+                <ul>
+                    {% for benefit in additional_benefits %}
+                    <li>
+                        <strong>{{ benefit.type }}:</strong> {{ benefit.description }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="timeline-details">
+            <h2>Relocation Timeline</h2>
+            <ul class="timeline">
+                {% for milestone in relocation_timeline %}
+                <li class="timeline-item">
+                    <strong>{{ milestone.title }}</strong><br>
+                    {{ milestone.date|date:"F d, Y" }}<br>
+                    <small>{{ milestone.description }}</small>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="relocation-details">
+            <h2>Action Items</h2>
+            <div class="info-card">
+                <h3>Required Documents</h3>
+                <ul class="checklist">
+                    {% for document in required_documents %}
+                    <li>
+                        {{ document.name }}
+                        {% if document.deadline %}
+                        <br><small>Deadline: {{ document.deadline|date:"F d, Y" }}</small>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Pre-Move Checklist</h3>
+                <ul class="checklist">
+                    {% for task in pre_move_checklist %}
+                    <li>
+                        {{ task.description }}
+                        {% if task.deadline %}
+                        <br><small>Complete by: {{ task.deadline|date:"F d, Y" }}</small>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="support-details">
+            <h2>Support Resources</h2>
+            <div class="resource-grid">
+                {% for resource in support_resources %}
+                <div class="resource-card">
+                    <div class="resource-icon">{{ resource.icon }}</div>
+                    <h3>{{ resource.title }}</h3>
+                    <p>{{ resource.description }}</p>
+                    <a href="{{ resource.link }}" class="button">Learn More</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        {% if orientation_session %}
+        <div class="timeline-details">
+            <h2>New Location Orientation</h2>
+            <div class="info-card">
+                <h3>Virtual Orientation Session</h3>
+                <p><strong>Date:</strong> {{ orientation_session.date|date:"F d, Y" }}</p>
+                <p><strong>Time:</strong> {{ orientation_session.time }}</p>
+                <p><strong>Duration:</strong> {{ orientation_session.duration }}</p>
+                <a href="{{ orientation_session.link }}" class="button">Join Session</a>
+                
+                <h3>Topics Covered</h3>
+                <ul>
+                    {% for topic in orientation_session.topics %}
+                    <li>{{ topic }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="relocation-details">
+            <h2>New Location Information</h2>
+            <div class="info-card">
+                <h3>Office Details</h3>
+                <p><strong>Address:</strong> {{ new_location.address }}</p>
+                <p><strong>Working Hours:</strong> {{ new_location.working_hours }}</p>
+                <p><strong>Dress Code:</strong> {{ new_location.dress_code }}</p>
+                
+                {% if new_location.transportation %}
+                <h3>Transportation</h3>
+                <ul>
+                    {% for transport in new_location.transportation %}
+                    <li>
+                        <strong>{{ transport.type }}:</strong> {{ transport.details }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                
+                {% if new_location.amenities %}
+                <h3>Office Amenities</h3>
+                <ul>
+                    {% for amenity in new_location.amenities %}
+                    <li>{{ amenity }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="support-details">
+            <h2>Contact Information</h2>
+            <div class="info-card">
+                <h3>Relocation Support Team</h3>
+                <p>
+                    <strong>HR Contact:</strong><br>
+                    {{ hr_contact.name }}<br>
+                    Email: {{ hr_contact.email }}<br>
+                    Phone: {{ hr_contact.phone }}
+                </p>
+                
+                <h3>New Location Support</h3>
+                <p>
+                    <strong>Local Contact:</strong><br>
+                    {{ local_contact.name }}<br>
+                    Email: {{ local_contact.email }}<br>
+                    Phone: {{ local_contact.phone }}
+                </p>
+                
+                {% if relocation_vendor %}
+                <h3>Relocation Service Provider</h3>
+                <p>
+                    <strong>{{ relocation_vendor.name }}</strong><br>
+                    Contact: {{ relocation_vendor.contact_person }}<br>
+                    Email: {{ relocation_vendor.email }}<br>
+                    Phone: {{ relocation_vendor.phone }}<br>
+                    Portal: <a href="{{ relocation_vendor.portal_link }}">Access Portal</a>
+                </p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="timeline-details">
+            <h2>Next Steps</h2>
+            <div class="info-card">
+                <p>To proceed with your relocation:</p>
+                <ol>
+                    <li>Review all provided information carefully</li>
+                    <li>Complete and submit the relocation acceptance form</li>
+                    <li>Schedule a meeting with the HR team to discuss any questions</li>
+                    <li>Begin gathering required documents</li>
+                </ol>
+                <a href="{{ acceptance_form_link }}" class="button">Submit Acceptance Form</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>We're excited about your new journey with {{ company_name }}!</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

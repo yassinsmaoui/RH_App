@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #7b1fa2, #9c27b0);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .announcement-section {
+            background-color: #f3e5f5;
+            border-left: 6px solid #7b1fa2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .details-section {
+            background-color: #e8eaf6;
+            border-left: 6px solid #3f51b5;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .transition-section {
+            background-color: #e1f5fe;
+            border-left: 6px solid #03a9f4;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #7b1fa2, #9c27b0);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .team-tag {
+            display: inline-block;
+            background-color: #e1bee7;
+            color: #4a148c;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .team-member {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .important-note {
+            background-color: #f3e5f5;
+            border-left: 4px solid #9c27b0;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .timeline {
+            position: relative;
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-left: 2px solid #9c27b0;
+            padding-left: 20px;
+        }
+        .timeline-item:last-child {
+            border-left: none;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -11px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background-color: #9c27b0;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Team Change Announcement 🔄</h1>
+        <p>Date: {{ announcement_date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="announcement-section">
+            <h2>Team Change Announcement</h2>
+            <div class="info-card">
+                <h3>Change Overview</h3>
+                <p>{{ announcement_message }}</p>
+                
+                <div class="important-note">
+                    <h4>Key Information</h4>
+                    <ul>
+                        <li><strong>Effective Date:</strong> {{ effective_date|date:"F d, Y" }}</li>
+                        <li><strong>Current Team:</strong> {{ current_team }}</li>
+                        <li><strong>New Team:</strong> {{ new_team }}</li>
+                        <li><strong>Position:</strong> {{ position }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="details-section">
+            <h2>Team Information</h2>
+            <div class="info-card">
+                <h3>New Team Details</h3>
+                <ul>
+                    <li><strong>Team Name:</strong> {{ new_team_name }}</li>
+                    <li><strong>Department:</strong> {{ new_department }}</li>
+                    <li><strong>Location:</strong> {{ new_location }}</li>
+                    <li><strong>Reporting Manager:</strong> {{ new_manager }}</li>
+                </ul>
+                
+                <h3>Team Members</h3>
+                <div class="team-grid">
+                    {% for member in team_members %}
+                    <div class="team-member">
+                        <h4>{{ member.name }}</h4>
+                        <p><strong>Role:</strong> {{ member.role }}</p>
+                        <p><strong>Experience:</strong> {{ member.experience }}</p>
+                        <span class="team-tag">{{ member.expertise }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <h3>Team Projects</h3>
+                <ul>
+                    {% for project in team_projects %}
+                    <li>
+                        <strong>{{ project.name }}</strong>
+                        <br>
+                        {{ project.description }}
+                        <br>
+                        <span class="team-tag">{{ project.status }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="transition-section">
+            <h2>Transition Plan</h2>
+            <div class="info-card">
+                <h3>Transition Timeline</h3>
+                <div class="timeline">
+                    {% for milestone in transition_timeline %}
+                    <div class="timeline-item">
+                        <h4>{{ milestone.date|date:"F d, Y" }}</h4>
+                        <p><strong>{{ milestone.title }}</strong></p>
+                        <p>{{ milestone.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <h3>Handover Items</h3>
+                <ul>
+                    {% for item in handover_items %}
+                    <li>
+                        <strong>{{ item.title }}</strong>
+                        <br>
+                        {{ item.description }}
+                        {% if item.deadline %}
+                        <br>
+                        <strong>Deadline:</strong> {{ item.deadline|date:"F d, Y" }}
+                        {% endif %}
+                        <span class="team-tag">{{ item.status }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Required Actions</h3>
+                <div class="important-note">
+                    <ul>
+                        {% for action in required_actions %}
+                        <li>
+                            <strong>{{ action.title }}</strong>
+                            <br>
+                            {{ action.description }}
+                            {% if action.deadline %}
+                            <br>
+                            <strong>Deadline:</strong> {{ action.deadline|date:"F d, Y" }}
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <h3>Support Resources</h3>
+                <ul>
+                    {% for resource in support_resources %}
+                    <li>
+                        <strong>{{ resource.name }}</strong>
+                        <br>
+                        {{ resource.description }}
+                        <br>
+                        <a href="{{ resource.link }}">Access Resource</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <a href="{{ team_portal_link }}" class="button">View Team Portal</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Human Resources Department</p>
+        <p>Contact: {{ hr_email }}</p>
+        <p>Support: {{ support_contact }}</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

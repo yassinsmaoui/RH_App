@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #1976d2;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .request-details {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .itinerary {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .expenses {
+            background-color: #fff3e0;
+            border-left: 6px solid #f57c00;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1976d2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .travel-item {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .status-approved {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .status-pending {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        .status-rejected {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .priority-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        .priority-high {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .priority-medium {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        .priority-low {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .note {
+            background-color: #fafafa;
+            padding: 10px;
+            border-left: 3px solid #9e9e9e;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        .checklist {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .checklist ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .checklist li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        .checklist li:before {
+            content: '⬜';
+            position: absolute;
+            left: 0;
+        }
+        .checklist li.completed:before {
+            content: '✅';
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>✈️ Travel Request Update ✈️</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>Here's an update on your travel request:</p>
+        
+        <div class="request-details">
+            <h2>Request Status</h2>
+            <div class="travel-item">
+                <h3>
+                    Request #{{ travel.request_id }}
+                    <span class="priority-badge priority-{{ travel.priority|lower }}">
+                        {{ travel.priority }} Priority
+                    </span>
+                </h3>
+                <p>
+                    <strong>Status:</strong>
+                    <span class="status-badge status-{{ travel.status|lower }}">
+                        {{ travel.status }}
+                    </span>
+                </p>
+                <p><strong>Purpose:</strong> {{ travel.purpose }}</p>
+                <p><strong>Submitted:</strong> {{ travel.submission_date|date:"F d, Y" }}</p>
+                {% if travel.approval_date %}
+                <p><strong>Approved:</strong> {{ travel.approval_date|date:"F d, Y" }}</p>
+                {% endif %}
+                <p><strong>Department:</strong> {{ travel.department }}</p>
+                <p><strong>Cost Center:</strong> {{ travel.cost_center }}</p>
+            </div>
+        </div>
+        
+        <div class="itinerary">
+            <h2>Travel Itinerary</h2>
+            {% for segment in travel.itinerary %}
+            <div class="travel-item">
+                <h3>{{ segment.type }} - {{ segment.direction }}</h3>
+                <table>
+                    <tr>
+                        <th>From</th>
+                        <td>{{ segment.from_location }}</td>
+                    </tr>
+                    <tr>
+                        <th>To</th>
+                        <td>{{ segment.to_location }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <td>{{ segment.date|date:"F d, Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Time</th>
+                        <td>{{ segment.time|time:"g:i A" }}</td>
+                    </tr>
+                    {% if segment.confirmation_number %}
+                    <tr>
+                        <th>Confirmation</th>
+                        <td>{{ segment.confirmation_number }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </div>
+            {% endfor %}
+            
+            <div class="travel-item">
+                <h3>Accommodation</h3>
+                <table>
+                    <tr>
+                        <th>Hotel</th>
+                        <td>{{ travel.accommodation.hotel_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Address</th>
+                        <td>{{ travel.accommodation.address }}</td>
+                    </tr>
+                    <tr>
+                        <th>Check-in</th>
+                        <td>{{ travel.accommodation.check_in|date:"F d, Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Check-out</th>
+                        <td>{{ travel.accommodation.check_out|date:"F d, Y" }}</td>
+                    </tr>
+                    {% if travel.accommodation.confirmation_number %}
+                    <tr>
+                        <th>Confirmation</th>
+                        <td>{{ travel.accommodation.confirmation_number }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+        
+        <div class="expenses">
+            <h2>Estimated Expenses</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in travel.estimated_expenses %}
+                    <tr>
+                        <td>{{ expense.category }}</td>
+                        <td>{{ expense.description }}</td>
+                        <td>{{ expense.amount|currency }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2"><strong>Total Estimated Cost</strong></td>
+                        <td><strong>{{ travel.total_estimated_cost|currency }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+            
+            {% if travel.advance_requested %}
+            <div class="note">
+                <strong>Travel Advance:</strong><br>
+                Amount Requested: {{ travel.advance_amount|currency }}<br>
+                Status: {{ travel.advance_status }}
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if travel.status == "REJECTED" %}
+        <div class="request-details">
+            <h2>Rejection Details</h2>
+            <p>{{ travel.rejection_reason }}</p>
+            <h3>How to Resubmit</h3>
+            <ol>
+                <li>Review the rejection reason carefully</li>
+                <li>Make necessary adjustments to your request</li>
+                <li>Provide any additional required information</li>
+                <li>Resubmit through the travel portal</li>
+            </ol>
+        </div>
+        {% endif %}
+        
+        {% if travel.status == "APPROVED" %}
+        <div class="checklist">
+            <h2>Pre-Travel Checklist</h2>
+            <ul>
+                {% for item in travel.checklist %}
+                <li class="{% if item.completed %}completed{% endif %}">
+                    {{ item.description }}
+                    {% if item.deadline %}
+                    <br><small>Deadline: {{ item.deadline|date:"F d, Y" }}</small>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        
+        <div class="request-details">
+            <h2>Travel Policy Reminders</h2>
+            <ul>
+                <li>Book travel arrangements through approved channels</li>
+                <li>Keep all receipts for expense reimbursement</li>
+                <li>Follow per diem guidelines for meals and incidentals</li>
+                <li>Report any changes to travel plans immediately</li>
+                <li>Submit expense reports within {{ policy.expense_submission_deadline }} days of return</li>
+            </ul>
+        </div>
+        
+        <p>Available Actions:</p>
+        <ul>
+            <li>View complete travel request details</li>
+            <li>Download travel itinerary</li>
+            <li>Submit travel changes</li>
+            <li>Request travel advance</li>
+            <li>Contact travel support</li>
+        </ul>
+        
+        <a href="{{ travel_portal_url }}" class="button">Access Travel Portal</a>
+        
+        {% if emergency_contacts %}
+        <div class="note">
+            <strong>Emergency Contacts:</strong><br>
+            {% for contact in emergency_contacts %}
+            {{ contact.name }}: {{ contact.phone }}<br>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>For questions about travel requests, contact the Travel Team.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

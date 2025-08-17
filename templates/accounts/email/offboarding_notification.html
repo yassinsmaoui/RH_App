@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #455A64;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .employee-details {
+            background-color: #eceff1;
+            border-left: 6px solid #455A64;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .important-dates {
+            background-color: #ffebee;
+            border-left: 6px solid #c62828;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .checklist-section {
+            background-color: #f5f5f5;
+            border-left: 6px solid #616161;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #455A64;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .checklist-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .checklist-item.completed {
+            background-color: #f1f8e9;
+            border-color: #689f38;
+        }
+        .checklist-item.pending {
+            background-color: #fff;
+            border-color: #ffa726;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-completed {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+        }
+        .status-pending {
+            background-color: #ffe0b2;
+            color: #ef6c00;
+        }
+        .deadline {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+        .important-note {
+            background-color: #fff3e0;
+            border-left: 6px solid #f57c00;
+            padding: 15px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Employee Offboarding Process</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>This email outlines the offboarding process following your resignation/end of contract. We want to ensure a smooth transition for both you and the organization.</p>
+        
+        <div class="employee-details">
+            <h2>Employee Information</h2>
+            <table>
+                <tr>
+                    <th>Employee ID</th>
+                    <td>{{ employee.employee_id }}</td>
+                </tr>
+                <tr>
+                    <th>Department</th>
+                    <td>{{ employee.department.name }}</td>
+                </tr>
+                <tr>
+                    <th>Position</th>
+                    <td>{{ employee.position }}</td>
+                </tr>
+                <tr>
+                    <th>Last Working Day</th>
+                    <td>{{ last_working_date|date:"F d, Y" }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="important-dates">
+            <h2>Important Dates</h2>
+            <table>
+                <tr>
+                    <th>Exit Interview</th>
+                    <td>{{ exit_interview_date|date:"F d, Y" }} at {{ exit_interview_time|time:"H:i" }}</td>
+                </tr>
+                <tr>
+                    <th>Handover Meeting</th>
+                    <td>{{ handover_date|date:"F d, Y" }} at {{ handover_time|time:"H:i" }}</td>
+                </tr>
+                <tr>
+                    <th>Final Clearance</th>
+                    <td>{{ clearance_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Final Settlement</th>
+                    <td>{{ settlement_date|date:"F d, Y" }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="checklist-section">
+            <h2>Offboarding Checklist</h2>
+            
+            <h3>Knowledge Transfer</h3>
+            {% for item in knowledge_transfer_checklist %}
+            <div class="checklist-item {% if item.completed %}completed{% else %}pending{% endif %}">
+                <span>{{ item.task }}</span>
+                <span class="status-badge {% if item.completed %}status-completed">Completed{% else %}status-pending">Pending{% endif %}</span>
+                {% if item.deadline %}
+                <div class="deadline">Deadline: {{ item.deadline|date:"F d, Y" }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <h3>Asset Return</h3>
+            {% for item in asset_return_checklist %}
+            <div class="checklist-item {% if item.completed %}completed{% else %}pending{% endif %}">
+                <span>{{ item.task }}</span>
+                <span class="status-badge {% if item.completed %}status-completed">Completed{% else %}status-pending">Pending{% endif %}</span>
+                {% if item.deadline %}
+                <div class="deadline">Deadline: {{ item.deadline|date:"F d, Y" }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <h3>Account Closure</h3>
+            {% for item in account_closure_checklist %}
+            <div class="checklist-item {% if item.completed %}completed{% else %}pending{% endif %}">
+                <span>{{ item.task }}</span>
+                <span class="status-badge {% if item.completed %}status-completed">Completed{% else %}status-pending">Pending{% endif %}</span>
+            </div>
+            {% endfor %}
+            
+            <h3>Documentation</h3>
+            {% for item in documentation_checklist %}
+            <div class="checklist-item {% if item.completed %}completed{% else %}pending{% endif %}">
+                <span>{{ item.task }}</span>
+                <span class="status-badge {% if item.completed %}status-completed">Completed{% else %}status-pending">Pending{% endif %}</span>
+                {% if item.deadline %}
+                <div class="deadline">Deadline: {{ item.deadline|date:"F d, Y" }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="important-note">
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>Complete all knowledge transfer activities before your last working day</li>
+                <li>Return all company assets to IT/Admin department</li>
+                <li>Submit all required documentation to HR</li>
+                <li>Ensure all expense claims are submitted and settled</li>
+                <li>Update your contact information for future correspondence</li>
+            </ul>
+        </div>
+        
+        <p>Final Settlement will include:</p>
+        <ul>
+            <li>Salary until last working day</li>
+            <li>Unused leave encashment (if applicable)</li>
+            <li>Pro-rated bonus/incentives (if applicable)</li>
+            <li>Deductions for unreturned assets or outstanding dues</li>
+        </ul>
+        
+        <a href="{{ offboarding_portal_url }}" class="button">Access Offboarding Portal</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you have any questions about the offboarding process, please contact the HR department.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .achievement-section {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .details-section {
+            background-color: #f1f8e9;
+            border-left: 6px solid #558b2f;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .next-steps-section {
+            background-color: #e0f2f1;
+            border-left: 6px solid #00796b;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .skill-tag {
+            display: inline-block;
+            background-color: #c8e6c9;
+            color: #1b5e20;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            width: {{ completion_percentage }}%;
+            transition: width 0.5s ease-in-out;
+        }
+        .certificate-preview {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .certificate-preview img {
+            max-width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .achievement-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .stat-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎓 Training Completion Certificate</h1>
+        <p>Date: {{ completion_date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="achievement-section">
+            <h2>Congratulations, {{ employee_name }}!</h2>
+            <div class="info-card">
+                <p>You have successfully completed:</p>
+                <h3>{{ training_title }}</h3>
+                
+                <div class="achievement-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ course_duration }}</div>
+                        <p>Hours of Training</p>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ modules_completed }}</div>
+                        <p>Modules Completed</p>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ final_score }}%</div>
+                        <p>Final Score</p>
+                    </div>
+                </div>
+                
+                <div class="certificate-preview">
+                    <img src="{{ certificate_image_url }}" alt="Certificate Preview">
+                    <p>Certificate ID: {{ certificate_id }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="details-section">
+            <h2>Training Details</h2>
+            <div class="info-card">
+                <h3>Course Information</h3>
+                <ul>
+                    <li><strong>Training Category:</strong> {{ training_category }}</li>
+                    <li><strong>Instructor:</strong> {{ instructor_name }}</li>
+                    <li><strong>Department:</strong> {{ department }}</li>
+                    <li><strong>Validity Period:</strong> {{ validity_period }}</li>
+                </ul>
+                
+                <h3>Skills Acquired</h3>
+                <div>
+                    {% for skill in skills_acquired %}
+                    <span class="skill-tag">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+                
+                <h3>Performance Summary</h3>
+                <ul>
+                    {% for module in module_performance %}
+                    <li>
+                        <strong>{{ module.name }}</strong>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ module.score }}%;"></div>
+                        </div>
+                        <p>Score: {{ module.score }}% | Status: {{ module.status }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="next-steps-section">
+            <h2>Next Steps</h2>
+            <div class="info-card">
+                <h3>Recommended Actions</h3>
+                <ul>
+                    {% for action in recommended_actions %}
+                    <li>
+                        <strong>{{ action.title }}</strong>
+                        <br>
+                        {{ action.description }}
+                        <br>
+                        <a href="{{ action.link }}">Learn More</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Additional Resources</h3>
+                <ul>
+                    {% for resource in additional_resources %}
+                    <li>
+                        <strong>{{ resource.name }}</strong>
+                        <br>
+                        {{ resource.description }}
+                        <br>
+                        <a href="{{ resource.link }}">Access Resource</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Career Development Opportunities</h3>
+                <ul>
+                    {% for opportunity in career_opportunities %}
+                    <li>
+                        <strong>{{ opportunity.title }}</strong>
+                        <br>
+                        {{ opportunity.description }}
+                        <span class="skill-tag">{{ opportunity.category }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="info-card">
+                    <h4>Important Notes</h4>
+                    <ul>
+                        <li>Your digital certificate has been added to your employee profile</li>
+                        <li>Share your achievement on the company's learning platform</li>
+                        <li>Schedule a follow-up with your supervisor to discuss applying your new skills</li>
+                    </ul>
+                </div>
+                
+                <a href="{{ learning_portal_link }}" class="button">Access Learning Portal</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Training Coordinator: {{ coordinator_name }}</p>
+        <p>Contact: {{ coordinator_email }}</p>
+        <p>Learning & Development Department</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

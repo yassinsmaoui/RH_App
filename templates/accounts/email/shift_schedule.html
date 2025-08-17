@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #00695c, #00897b);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .schedule-section {
+            background-color: #e0f2f1;
+            border-left: 6px solid #00897b;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .details-section {
+            background-color: #e8f5e9;
+            border-left: 6px solid #43a047;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .support-section {
+            background-color: #f1f8e9;
+            border-left: 6px solid #7cb342;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #00695c, #00897b);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .shift-tag {
+            display: inline-block;
+            background-color: #b2dfdb;
+            color: #00695c;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin: 20px 0;
+        }
+        .schedule-day {
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .schedule-day.today {
+            border: 2px solid #00897b;
+        }
+        .important-note {
+            background-color: #e0f2f1;
+            border-left: 4px solid #00897b;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .shift-details {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .calendar-view {
+            margin: 20px 0;
+        }
+        .calendar-header {
+            background-color: #00897b;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .calendar-body {
+            border: 1px solid #e0e0e0;
+            border-radius: 0 0 5px 5px;
+        }
+        .shift-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Shift Schedule Update 📅</h1>
+        <p>Date: {{ notification_date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="schedule-section">
+            <h2>Schedule Overview</h2>
+            <div class="info-card">
+                <h3>Employee Information</h3>
+                <div class="important-note">
+                    <ul>
+                        <li><strong>Employee Name:</strong> {{ employee_name }}</li>
+                        <li><strong>Employee ID:</strong> {{ employee_id }}</li>
+                        <li><strong>Department:</strong> {{ department }}</li>
+                        <li><strong>Position:</strong> {{ position }}</li>
+                        <li><strong>Schedule Period:</strong> {{ schedule_start_date|date:"F d" }} - {{ schedule_end_date|date:"F d, Y" }}</li>
+                        <span class="shift-tag">{{ schedule_type }}</span>
+                    </ul>
+                </div>
+                
+                <h3>Weekly Schedule</h3>
+                <div class="calendar-view">
+                    <div class="calendar-header">
+                        <h4>{{ month_year }}</h4>
+                    </div>
+                    <div class="calendar-body">
+                        <div class="schedule-grid">
+                            {% for day in schedule_days %}
+                            <div class="schedule-day {% if day.is_today %}today{% endif %}">
+                                <strong>{{ day.date|date:"D" }}</strong>
+                                <br>
+                                {{ day.date|date:"d" }}
+                                <br>
+                                {% if day.shift %}
+                                <span class="shift-tag">{{ day.shift.type }}</span>
+                                <br>
+                                {{ day.shift.start_time }} - {{ day.shift.end_time }}
+                                {% else %}
+                                <span class="shift-tag">Off</span>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="shift-legend">
+                    {% for type in shift_types %}
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: {{ type.color }}"></div>
+                        <span>{{ type.name }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="details-section">
+            <h2>Shift Details</h2>
+            <div class="info-card">
+                <h3>Upcoming Shifts</h3>
+                {% for shift in upcoming_shifts %}
+                <div class="shift-details">
+                    <h4>{{ shift.date|date:"l, F d" }}</h4>
+                    <ul>
+                        <li><strong>Shift Type:</strong> {{ shift.type }}</li>
+                        <li><strong>Hours:</strong> {{ shift.start_time }} - {{ shift.end_time }}</li>
+                        <li><strong>Location:</strong> {{ shift.location }}</li>
+                        {% if shift.supervisor %}
+                        <li><strong>Supervisor:</strong> {{ shift.supervisor }}</li>
+                        {% endif %}
+                        {% if shift.special_instructions %}
+                        <li><strong>Special Instructions:</strong> {{ shift.special_instructions }}</li>
+                        {% endif %}
+                    </ul>
+                    <span class="shift-tag">{{ shift.status }}</span>
+                </div>
+                {% endfor %}
+                
+                <h3>Schedule Changes</h3>
+                <div class="important-note">
+                    {% if schedule_changes %}
+                    <ul>
+                        {% for change in schedule_changes %}
+                        <li>
+                            <strong>{{ change.type }}:</strong>
+                            <br>
+                            {{ change.description }}
+                            <br>
+                            <strong>Effective:</strong> {{ change.effective_date|date:"F d, Y" }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p>No changes to report for this schedule period.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="support-section">
+            <h2>Additional Information</h2>
+            <div class="info-card">
+                <h3>Important Reminders</h3>
+                <ul>
+                    {% for reminder in important_reminders %}
+                    <li>
+                        <strong>{{ reminder.title }}</strong>
+                        <br>
+                        {{ reminder.description }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Time Off Requests</h3>
+                <div class="important-note">
+                    <p>To request time off or make schedule adjustments:</p>
+                    <ol>
+                        {% for step in timeoff_request_steps %}
+                        <li>{{ step }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                
+                <h3>Support Resources</h3>
+                <ul>
+                    {% for resource in support_resources %}
+                    <li>
+                        <strong>{{ resource.title }}</strong>
+                        <br>
+                        {{ resource.description }}
+                        <br>
+                        <a href="{{ resource.link }}">Learn More</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <a href="{{ schedule_portal_link }}" class="button">View Full Schedule</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>{{ scheduling_department_name }}</p>
+        <p>Contact: {{ scheduling_email }}</p>
+        <p>Support: {{ support_contact }}</p>
+        <p>Schedule Notice: Please review your schedule carefully and report any conflicts promptly.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

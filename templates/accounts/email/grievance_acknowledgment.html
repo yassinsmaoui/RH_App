@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #5c6bc0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .grievance-details {
+            background-color: #e8eaf6;
+            border-left: 6px solid #5c6bc0;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .process-steps {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .rights-protections {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #5c6bc0;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+        .important-note {
+            background-color: #fff3e0;
+            border-left: 6px solid #f57c00;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .timeline {
+            background-color: #f3e5f5;
+            border-left: 6px solid #9c27b0;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .support {
+            background-color: #e0f2f1;
+            border-left: 6px solid #009688;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .confidentiality {
+            background-color: #fce4ec;
+            border-left: 6px solid #c2185b;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Grievance Acknowledgment</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>We acknowledge receipt of your grievance submitted on {{ grievance.submission_date|date:"F d, Y" }}. We take all employee concerns seriously and are committed to addressing them fairly and promptly.</p>
+        
+        <div class="grievance-details">
+            <h2>Grievance Information</h2>
+            <table>
+                <tr>
+                    <th>Reference Number</th>
+                    <td>{{ grievance.reference_number }}</td>
+                </tr>
+                <tr>
+                    <th>Submission Date</th>
+                    <td>{{ grievance.submission_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Category</th>
+                    <td>{{ grievance.category }}</td>
+                </tr>
+                <tr>
+                    <th>Current Status</th>
+                    <td>{{ grievance.status }}</td>
+                </tr>
+                <tr>
+                    <th>Assigned Handler</th>
+                    <td>{{ handler.name }} ({{ handler.position }})</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="process-steps">
+            <h2>Grievance Process Steps</h2>
+            <ol>
+                {% for step in process_steps %}
+                <li>
+                    <strong>{{ step.name }}</strong>
+                    <p>{{ step.description }}</p>
+                    {% if step.timeline %}
+                    <p><em>Expected Timeline: {{ step.timeline }}</em></p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ol>
+        </div>
+        
+        <div class="timeline">
+            <h2>Expected Timeline</h2>
+            <ul>
+                {% for milestone in timeline_milestones %}
+                <li>
+                    <strong>{{ milestone.date|date:"F d, Y" }}</strong>: {{ milestone.description }}
+                    {% if milestone.notes %}
+                    <p><em>{{ milestone.notes }}</em></p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="rights-protections">
+            <h2>Your Rights and Protections</h2>
+            <ul>
+                {% for right in rights_protections %}
+                <li>
+                    <strong>{{ right.title }}</strong>
+                    <p>{{ right.description }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="confidentiality">
+            <h2>Confidentiality Statement</h2>
+            <p>{{ confidentiality_statement }}</p>
+            <ul>
+                {% for point in confidentiality_points %}
+                <li>{{ point }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="support">
+            <h2>Available Support</h2>
+            <ul>
+                {% for support in support_resources %}
+                <li>
+                    <strong>{{ support.type }}</strong>
+                    <p>{{ support.description }}</p>
+                    {% if support.contact %}
+                    <p>Contact: {{ support.contact }}</p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="important-note">
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>All information provided will be treated confidentially</li>
+                <li>You have the right to be accompanied in meetings</li>
+                <li>You can provide additional information at any time</li>
+                <li>Regular updates will be provided on the progress</li>
+                <li>You are protected against any form of retaliation</li>
+            </ul>
+        </div>
+        
+        <p>Next Steps:</p>
+        <ul>
+            <li>Review the process steps and timeline</li>
+            <li>Prepare any additional documentation if required</li>
+            <li>Attend the initial meeting scheduled for {{ initial_meeting_date|date:"F d, Y" }}</li>
+            <li>Consider if you need support or representation</li>
+            <li>Keep copies of all related correspondence</li>
+        </ul>
+        
+        <p>You can track the progress of your grievance and access related documents through the HR portal:</p>
+        
+        <a href="{{ hr_portal_url }}" class="button">Access HR Portal</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you have any questions about the grievance process or need immediate assistance, please contact your HR representative.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

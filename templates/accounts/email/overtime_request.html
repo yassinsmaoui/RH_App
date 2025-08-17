@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #7b1fa2;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .request-details {
+            background-color: #f3e5f5;
+            border-left: 6px solid #7b1fa2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .time-details {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .compensation {
+            background-color: #fff3e0;
+            border-left: 6px solid #f57c00;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #7b1fa2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .overtime-item {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .status-approved {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .status-pending {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        .status-rejected {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .priority-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        .priority-high {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .priority-medium {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        .priority-low {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .note {
+            background-color: #fafafa;
+            padding: 10px;
+            border-left: 3px solid #9e9e9e;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        .progress-bar {
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            height: 20px;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            background-color: #7b1fa2;
+            height: 100%;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            font-size: 12px;
+            line-height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⏰ Overtime Request Update ⏰</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>Here's an update on your overtime request:</p>
+        
+        <div class="request-details">
+            <h2>Request Status</h2>
+            <div class="overtime-item">
+                <h3>
+                    Request #{{ overtime.request_id }}
+                    <span class="priority-badge priority-{{ overtime.priority|lower }}">
+                        {{ overtime.priority }} Priority
+                    </span>
+                </h3>
+                <p>
+                    <strong>Status:</strong>
+                    <span class="status-badge status-{{ overtime.status|lower }}">
+                        {{ overtime.status }}
+                    </span>
+                </p>
+                <p><strong>Submitted:</strong> {{ overtime.submission_date|date:"F d, Y" }}</p>
+                {% if overtime.approval_date %}
+                <p><strong>Processed:</strong> {{ overtime.approval_date|date:"F d, Y" }}</p>
+                {% endif %}
+                <p><strong>Department:</strong> {{ overtime.department }}</p>
+                <p><strong>Project:</strong> {{ overtime.project }}</p>
+            </div>
+        </div>
+        
+        <div class="time-details">
+            <h2>Overtime Details</h2>
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <td>{{ overtime.date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Start Time</th>
+                    <td>{{ overtime.start_time|time:"g:i A" }}</td>
+                </tr>
+                <tr>
+                    <th>End Time</th>
+                    <td>{{ overtime.end_time|time:"g:i A" }}</td>
+                </tr>
+                <tr>
+                    <th>Duration</th>
+                    <td>{{ overtime.duration|hours_minutes }}</td>
+                </tr>
+                <tr>
+                    <th>Type</th>
+                    <td>{{ overtime.type }}</td>
+                </tr>
+            </table>
+            
+            <div class="note">
+                <strong>Reason:</strong><br>
+                {{ overtime.reason }}
+            </div>
+            
+            {% if overtime.tasks %}
+            <h3>Planned Tasks</h3>
+            <ul>
+                {% for task in overtime.tasks %}
+                <li>{{ task.description }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        
+        {% if overtime.status == "APPROVED" %}
+        <div class="compensation">
+            <h2>Compensation Details</h2>
+            <table>
+                <tr>
+                    <th>Rate Type</th>
+                    <td>{{ overtime.rate_type }}</td>
+                </tr>
+                <tr>
+                    <th>Rate Multiplier</th>
+                    <td>{{ overtime.rate_multiplier }}x</td>
+                </tr>
+                <tr>
+                    <th>Hours Approved</th>
+                    <td>{{ overtime.approved_hours|hours_minutes }}</td>
+                </tr>
+                {% if overtime.compensation_type == "PAY" %}
+                <tr>
+                    <th>Estimated Amount</th>
+                    <td>{{ overtime.estimated_amount|currency }}</td>
+                </tr>
+                <tr>
+                    <th>Payment Date</th>
+                    <td>{{ overtime.payment_date|date:"F d, Y" }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <th>Time Off Credit</th>
+                    <td>{{ overtime.time_off_credit|hours_minutes }}</td>
+                </tr>
+                <tr>
+                    <th>Valid Until</th>
+                    <td>{{ overtime.time_off_valid_until|date:"F d, Y" }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        
+        <div class="time-details">
+            <h2>Monthly Overtime Summary</h2>
+            <p><strong>Month:</strong> {{ overtime.month_year|date:"F Y" }}</p>
+            
+            <div class="overtime-item">
+                <p><strong>Hours Used:</strong> {{ overtime.monthly_hours_used|hours_minutes }}</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ overtime.monthly_usage_percentage }}%">
+                        {{ overtime.monthly_usage_percentage }}%
+                    </div>
+                </div>
+                <p><small>Monthly Limit: {{ overtime.monthly_limit|hours_minutes }}</small></p>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if overtime.status == "REJECTED" %}
+        <div class="request-details">
+            <h2>Rejection Details</h2>
+            <p>{{ overtime.rejection_reason }}</p>
+            <h3>How to Resubmit</h3>
+            <ol>
+                <li>Review the rejection reason carefully</li>
+                <li>Adjust your request based on the feedback</li>
+                <li>Provide any additional required justification</li>
+                <li>Resubmit through the overtime portal</li>
+            </ol>
+        </div>
+        {% endif %}
+        
+        <div class="request-details">
+            <h2>Overtime Policy Reminders</h2>
+            <ul>
+                <li>Submit requests at least {{ policy.minimum_notice_hours }} hours in advance</li>
+                <li>Maximum {{ policy.daily_limit|hours_minutes }} of overtime per day</li>
+                <li>Monthly limit of {{ policy.monthly_limit|hours_minutes }}</li>
+                <li>Compensation type must be specified at time of request</li>
+                <li>Time-off credits must be used within {{ policy.time_off_validity_days }} days</li>
+            </ul>
+        </div>
+        
+        <p>Available Actions:</p>
+        <ul>
+            <li>View complete overtime history</li>
+            <li>Download overtime reports</li>
+            <li>Submit new overtime requests</li>
+            <li>Track compensation status</li>
+            <li>View monthly summaries</li>
+        </ul>
+        
+        <a href="{{ overtime_portal_url }}" class="button">Access Overtime Portal</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>For questions about overtime requests, contact your supervisor or HR Team.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

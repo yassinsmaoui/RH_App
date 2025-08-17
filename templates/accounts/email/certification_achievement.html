@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #00796b, #009688);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .achievement-section {
+            background-color: #e0f2f1;
+            border-left: 6px solid #00796b;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .details-section {
+            background-color: #f1f8e9;
+            border-left: 6px solid #558b2f;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .benefits-section {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #00796b, #009688);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .cert-tag {
+            display: inline-block;
+            background-color: #b2dfdb;
+            color: #004d40;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .achievement-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .stat-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00796b;
+        }
+        .certificate-preview {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .certificate-preview img {
+            max-width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .skill-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏆 Certification Achievement</h1>
+        <p>Date: {{ achievement_date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="achievement-section">
+            <h2>Congratulations, {{ employee_name }}!</h2>
+            <div class="info-card">
+                <p>You have successfully earned:</p>
+                <h3>{{ certification_title }}</h3>
+                
+                <div class="achievement-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ study_hours }}</div>
+                        <p>Hours of Study</p>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ exam_score }}%</div>
+                        <p>Exam Score</p>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ validity_years }}</div>
+                        <p>Years Valid</p>
+                    </div>
+                </div>
+                
+                <div class="certificate-preview">
+                    <img src="{{ certificate_image_url }}" alt="Certificate Preview">
+                    <p>Certificate ID: {{ certificate_id }}</p>
+                    <p>Valid Until: {{ expiry_date|date:"F d, Y" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="details-section">
+            <h2>Certification Details</h2>
+            <div class="info-card">
+                <h3>Certification Information</h3>
+                <ul>
+                    <li><strong>Issuing Authority:</strong> {{ issuing_authority }}</li>
+                    <li><strong>Certification Level:</strong> {{ certification_level }}</li>
+                    <li><strong>Industry:</strong> {{ industry }}</li>
+                    <li><strong>Category:</strong> {{ category }}</li>
+                </ul>
+                
+                <h3>Validated Skills</h3>
+                <div class="skills-grid">
+                    {% for skill in validated_skills %}
+                    <div class="skill-item">
+                        <h4>{{ skill.name }}</h4>
+                        <p>{{ skill.description }}</p>
+                        <div class="cert-tag">{{ skill.proficiency }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <h3>Achievement Highlights</h3>
+                <ul>
+                    {% for highlight in achievement_highlights %}
+                    <li>
+                        <strong>{{ highlight.title }}</strong>
+                        <br>
+                        {{ highlight.description }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="benefits-section">
+            <h2>Benefits & Opportunities</h2>
+            <div class="info-card">
+                <h3>Career Benefits</h3>
+                <ul>
+                    {% for benefit in career_benefits %}
+                    <li>
+                        <strong>{{ benefit.title }}</strong>
+                        <br>
+                        {{ benefit.description }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Recognition & Rewards</h3>
+                <ul>
+                    {% for reward in recognition_rewards %}
+                    <li>
+                        <strong>{{ reward.type }}</strong>
+                        <br>
+                        {{ reward.details }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Next Steps</h3>
+                <div class="info-card">
+                    <ul>
+                        {% for step in next_steps %}
+                        <li>
+                            <strong>{{ step.title }}</strong>
+                            <br>
+                            {{ step.description }}
+                            {% if step.deadline %}
+                            <br>
+                            <strong>Deadline:</strong> {{ step.deadline|date:"F d, Y" }}
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <h3>Additional Resources</h3>
+                <ul>
+                    {% for resource in additional_resources %}
+                    <li>
+                        <strong>{{ resource.name }}</strong>
+                        <br>
+                        {{ resource.description }}
+                        <br>
+                        <a href="{{ resource.link }}">Access Resource</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <a href="{{ learning_portal_link }}" class="button">View in Learning Portal</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Learning & Development Department</p>
+        <p>Contact: {{ learning_email }}</p>
+        <p>Support: {{ support_contact }}</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

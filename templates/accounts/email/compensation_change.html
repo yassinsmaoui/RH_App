@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .change-section {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .details-section {
+            background-color: #f1f8e9;
+            border-left: 6px solid #558b2f;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .benefits-section {
+            background-color: #f9fbe7;
+            border-left: 6px solid #827717;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .change-tag {
+            display: inline-block;
+            background-color: #c8e6c9;
+            color: #1b5e20;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .comparison-table th {
+            background-color: #e8f5e9;
+            color: #1b5e20;
+        }
+        .comparison-table tr:nth-child(even) {
+            background-color: #f9fbe7;
+        }
+        .important-note {
+            background-color: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .chart-container {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .benefit-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Compensation Change Notification 📈</h1>
+        <p>Date: {{ notification_date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="change-section">
+            <h2>Compensation Change Overview</h2>
+            <div class="info-card">
+                <h3>Change Information</h3>
+                <div class="important-note">
+                    <ul>
+                        <li><strong>Employee Name:</strong> {{ employee_name }}</li>
+                        <li><strong>Employee ID:</strong> {{ employee_id }}</li>
+                        <li><strong>Department:</strong> {{ department }}</li>
+                        <li><strong>Position:</strong> {{ position }}</li>
+                        <li><strong>Effective Date:</strong> {{ effective_date|date:"F d, Y" }}</li>
+                        <span class="change-tag">{{ change_type }}</span>
+                    </ul>
+                </div>
+                
+                <h3>Change Summary</h3>
+                <p>{{ change_summary }}</p>
+            </div>
+        </div>
+        
+        <div class="details-section">
+            <h2>Compensation Details</h2>
+            <div class="info-card">
+                <h3>Salary Comparison</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Previous</th>
+                            <th>New</th>
+                            <th>Change</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for component in salary_components %}
+                        <tr>
+                            <td><strong>{{ component.name }}</strong></td>
+                            <td>{{ component.previous }}</td>
+                            <td>{{ component.new }}</td>
+                            <td>{{ component.change }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                <h3>Additional Compensation</h3>
+                <ul>
+                    {% for item in additional_compensation %}
+                    <li>
+                        <strong>{{ item.type }}</strong>
+                        <br>
+                        {{ item.description }}
+                        <br>
+                        <strong>Value:</strong> {{ item.value }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="chart-container">
+                    <h3>Annual Compensation Overview</h3>
+                    <img src="{{ compensation_chart_url }}" alt="Compensation Chart" style="max-width: 100%; height: auto;">
+                </div>
+            </div>
+        </div>
+        
+        <div class="benefits-section">
+            <h2>Benefits & Additional Information</h2>
+            <div class="info-card">
+                <h3>Updated Benefits Package</h3>
+                <div class="benefits-grid">
+                    {% for benefit in benefits_package %}
+                    <div class="benefit-card">
+                        <h4>{{ benefit.name }}</h4>
+                        <p>{{ benefit.description }}</p>
+                        {% if benefit.value %}
+                        <p><strong>Value:</strong> {{ benefit.value }}</p>
+                        {% endif %}
+                        <span class="change-tag">{{ benefit.status }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <h3>Important Information</h3>
+                <div class="important-note">
+                    <h4>Next Steps</h4>
+                    <ol>
+                        {% for step in next_steps %}
+                        <li>
+                            <strong>{{ step.title }}</strong>
+                            <br>
+                            {{ step.description }}
+                            {% if step.deadline %}
+                            <br>
+                            <strong>Complete by:</strong> {{ step.deadline|date:"F d, Y" }}
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                
+                <h3>Tax Implications</h3>
+                <ul>
+                    {% for item in tax_implications %}
+                    <li>
+                        <strong>{{ item.aspect }}</strong>
+                        <br>
+                        {{ item.description }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Support & Resources</h3>
+                <ul>
+                    {% for resource in support_resources %}
+                    <li>
+                        <strong>{{ resource.title }}</strong>
+                        <br>
+                        {{ resource.description }}
+                        <br>
+                        <a href="{{ resource.link }}">Learn More</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <a href="{{ compensation_portal_link }}" class="button">View Compensation Details</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>{{ hr_department_name }}</p>
+        <p>Contact: {{ hr_email }}</p>
+        <p>Support: {{ support_contact }}</p>
+        <p>Confidentiality Notice: This email contains confidential compensation information intended only for the named recipient.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

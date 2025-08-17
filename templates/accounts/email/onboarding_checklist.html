@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #1976D2;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .welcome-section {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976D2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .checklist-section {
+            background-color: #f5f5f5;
+            border-left: 6px solid #616161;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .important-dates {
+            background-color: #fff3e0;
+            border-left: 6px solid #f57c00;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1976D2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .checklist-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .checklist-item.completed {
+            background-color: #f1f8e9;
+            border-color: #689f38;
+        }
+        .checklist-item.pending {
+            background-color: #fff;
+            border-color: #ffa726;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-completed {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+        }
+        .status-pending {
+            background-color: #ffe0b2;
+            color: #ef6c00;
+        }
+        .deadline {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Welcome to {{ company_name }}</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <div class="welcome-section">
+            <h2>Welcome Aboard!</h2>
+            <p>We're excited to have you join our team. To ensure a smooth onboarding process, we've prepared this checklist of important tasks and information for you.</p>
+            
+            <table>
+                <tr>
+                    <th>Employee ID</th>
+                    <td>{{ employee.employee_id }}</td>
+                </tr>
+                <tr>
+                    <th>Department</th>
+                    <td>{{ employee.department.name }}</td>
+                </tr>
+                <tr>
+                    <th>Position</th>
+                    <td>{{ employee.position }}</td>
+                </tr>
+                <tr>
+                    <th>Start Date</th>
+                    <td>{{ employee.start_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Direct Supervisor</th>
+                    <td>{{ employee.supervisor.get_full_name }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="important-dates">
+            <h2>Important Dates</h2>
+            <table>
+                <tr>
+                    <th>Orientation Session</th>
+                    <td>{{ orientation_date|date:"F d, Y" }} at {{ orientation_time|time:"H:i" }}</td>
+                </tr>
+                <tr>
+                    <th>IT Setup</th>
+                    <td>{{ it_setup_date|date:"F d, Y" }} at {{ it_setup_time|time:"H:i" }}</td>
+                </tr>
+                <tr>
+                    <th>First Team Meeting</th>
+                    <td>{{ team_meeting_date|date:"F d, Y" }} at {{ team_meeting_time|time:"H:i" }}</td>
+                </tr>
+                <tr>
+                    <th>Probation Review</th>
+                    <td>{{ probation_review_date|date:"F d, Y" }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="checklist-section">
+            <h2>Onboarding Checklist</h2>
+            
+            <h3>Before First Day</h3>
+            {% for item in pre_start_checklist %}
+            <div class="checklist-item {% if item.completed %}completed{% else %}pending{% endif %}">
+                <span>{{ item.task }}</span>
+                <span class="status-badge {% if item.completed %}status-completed">Completed{% else %}status-pending">Pending{% endif %}</span>
+                {% if item.deadline %}
+                <div class="deadline">Deadline: {{ item.deadline|date:"F d, Y" }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <h3>First Day</h3>
+            {% for item in first_day_checklist %}
+            <div class="checklist-item {% if item.completed %}completed{% else %}pending{% endif %}">
+                <span>{{ item.task }}</span>
+                <span class="status-badge {% if item.completed %}status-completed">Completed{% else %}status-pending">Pending{% endif %}</span>
+            </div>
+            {% endfor %}
+            
+            <h3>First Week</h3>
+            {% for item in first_week_checklist %}
+            <div class="checklist-item {% if item.completed %}completed{% else %}pending{% endif %}">
+                <span>{{ item.task }}</span>
+                <span class="status-badge {% if item.completed %}status-completed">Completed{% else %}status-pending">Pending{% endif %}</span>
+                {% if item.deadline %}
+                <div class="deadline">Deadline: {{ item.deadline|date:"F d, Y" }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <h3>First Month</h3>
+            {% for item in first_month_checklist %}
+            <div class="checklist-item {% if item.completed %}completed{% else %}pending{% endif %}">
+                <span>{{ item.task }}</span>
+                <span class="status-badge {% if item.completed %}status-completed">Completed{% else %}status-pending">Pending{% endif %}</span>
+                {% if item.deadline %}
+                <div class="deadline">Deadline: {{ item.deadline|date:"F d, Y" }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <p>Important Notes:</p>
+        <ul>
+            <li>Please complete all tasks by their respective deadlines</li>
+            <li>Mark each task as completed in the HR portal once finished</li>
+            <li>Contact HR if you need assistance with any task</li>
+            <li>Keep track of your progress through the onboarding portal</li>
+        </ul>
+        
+        <a href="{{ onboarding_portal_url }}" class="button">Access Onboarding Portal</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you have any questions about your onboarding process, please contact the HR department.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

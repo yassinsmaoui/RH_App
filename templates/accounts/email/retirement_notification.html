@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #4a90e2, #7e57c2);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .career-details {
+            background-color: #e8f5e9;
+            border-left: 6px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .retirement-details {
+            background-color: #e3f2fd;
+            border-left: 6px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .tribute-details {
+            background-color: #fff3e0;
+            border-left: 6px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #4a90e2, #7e57c2);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .timeline {
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #4a90e2;
+        }
+        .timeline-item:after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 15px;
+            width: 2px;
+            height: calc(100% + 5px);
+            background-color: #4a90e2;
+        }
+        .timeline-item:last-child:after {
+            display: none;
+        }
+        .quote {
+            font-style: italic;
+            padding: 15px;
+            background-color: #fff;
+            border-left: 4px solid #4a90e2;
+            margin: 10px 0;
+        }
+        .career-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4a90e2;
+        }
+        .testimonial {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 10px 0;
+            position: relative;
+        }
+        .testimonial:before {
+            content: "\201C";
+            font-size: 60px;
+            color: #4a90e2;
+            position: absolute;
+            left: 10px;
+            top: -10px;
+            opacity: 0.2;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌟 Celebrating a Distinguished Career 🌟</h1>
+        <p>Retirement Announcement for {{ employee.get_full_name }}</p>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ company_name }} Team,</p>
+        
+        <p>We announce the upcoming retirement of our esteemed colleague, {{ employee.get_full_name }}, who has been an integral part of our organization for {{ employee.years_of_service }} years.</p>
+        
+        <div class="career-details">
+            <h2>Career Journey</h2>
+            <div class="career-stats">
+                <div class="stat-card">
+                    <div class="stat-number">{{ employee.years_of_service }}</div>
+                    <div>Years of Service</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ employee.roles_held }}</div>
+                    <div>Roles Held</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ employee.projects_led }}</div>
+                    <div>Projects Led</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ employee.team_members_mentored }}</div>
+                    <div>Team Members Mentored</div>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <ul class="timeline">
+                    <li class="timeline-item">
+                        <strong>Joined {{ company_name }}</strong><br>
+                        {{ employee.join_date|date:"F d, Y" }}<br>
+                        <small>Started as {{ employee.initial_position }} in {{ employee.initial_department }}</small>
+                    </li>
+                    {% for milestone in career_milestones %}
+                    <li class="timeline-item">
+                        <strong>{{ milestone.title }}</strong><br>
+                        {{ milestone.date|date:"F d, Y" }}<br>
+                        <small>{{ milestone.description }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="retirement-details">
+            <h2>Retirement Information</h2>
+            <div class="info-card">
+                <p><strong>Last Working Day:</strong> {{ retirement_date|date:"F d, Y" }}</p>
+                <p><strong>Current Position:</strong> {{ employee.current_position }}</p>
+                <p><strong>Department:</strong> {{ employee.current_department }}</p>
+                
+                <h3>Transition Plan</h3>
+                <ul class="checklist">
+                    {% for item in transition_plan %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Knowledge Transfer Sessions</h3>
+                {% for session in knowledge_transfer_sessions %}
+                <p>
+                    <strong>{{ session.title }}</strong><br>
+                    Date: {{ session.date|date:"F d, Y" }}<br>
+                    Time: {{ session.time }}<br>
+                    {% if session.virtual_link %}
+                    Link: <a href="{{ session.virtual_link }}">Join Session</a>
+                    {% else %}
+                    Location: {{ session.location }}
+                    {% endif %}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="tribute-details">
+            <h2>Tributes & Messages</h2>
+            {% for message in farewell_messages %}
+            <div class="testimonial">
+                <p>{{ message.content }}</p>
+                <p><strong>- {{ message.author }}</strong><br>
+                <small>{{ message.position }}</small></p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if farewell_celebration %}
+        <div class="career-details">
+            <h2>Farewell Celebration</h2>
+            <div class="info-card">
+                <h3>Join Us in Celebrating {{ employee.first_name }}'s Retirement</h3>
+                <p><strong>Date:</strong> {{ farewell_celebration.date|date:"F d, Y" }}</p>
+                <p><strong>Time:</strong> {{ farewell_celebration.time }}</p>
+                <p><strong>Location:</strong> {{ farewell_celebration.location }}</p>
+                {% if farewell_celebration.virtual_link %}
+                <p><strong>Virtual Link:</strong> <a href="{{ farewell_celebration.virtual_link }}">Join Here</a></p>
+                {% endif %}
+                <p><em>{{ farewell_celebration.special_note }}</em></p>
+                
+                {% if farewell_celebration.rsvp_required %}
+                <a href="{{ farewell_celebration.rsvp_link }}" class="button">RSVP Here</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="quote">
+            "{{ retirement_message }}"
+        </div>
+        
+        {% if memory_book_enabled %}
+        <div class="tribute-details">
+            <h2>Share Your Memories</h2>
+            <div class="info-card">
+                <p>Contribute to {{ employee.first_name }}'s digital memory book:</p>
+                <ul>
+                    <li>Share your favorite memories</li>
+                    <li>Upload photos</li>
+                    <li>Write a personal message</li>
+                </ul>
+                <a href="{{ memory_book_link }}" class="button">Contribute Now</a>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="retirement-details">
+            <h2>Contact Information</h2>
+            <div class="info-card">
+                <p>For any queries regarding the retirement process or celebration:</p>
+                <p>
+                    <strong>HR Contact:</strong> {{ hr_contact.name }}<br>
+                    Email: {{ hr_contact.email }}<br>
+                    Phone: {{ hr_contact.phone }}
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Please join us in celebrating {{ employee.get_full_name }}'s remarkable career and wishing them the very best for their retirement.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

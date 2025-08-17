@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #00796b;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .timesheet-details {
+            background-color: #e0f2f1;
+            border-left: 6px solid #00796b;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .summary-details {
+            background-color: #f1f8e9;
+            border-left: 6px solid #558b2f;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .warning-details {
+            background-color: #fff3e0;
+            border-left: 6px solid #f57c00;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #00796b;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .timesheet-item {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .status-pending {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        .status-submitted {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .status-overdue {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .note {
+            background-color: #fafafa;
+            padding: 10px;
+            border-left: 3px solid #9e9e9e;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        .progress-bar {
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            height: 20px;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            background-color: #00796b;
+            height: 100%;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            font-size: 12px;
+            line-height: 20px;
+        }
+        .warning {
+            color: #c62828;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⏰ Timesheet Reminder ⏰</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        {% if timesheet.status == "OVERDUE" %}
+        <p class="warning">Your timesheet for the period {{ timesheet.period_start|date:"F d" }} - {{ timesheet.period_end|date:"F d, Y" }} is overdue!</p>
+        {% else %}
+        <p>This is a friendly reminder about your timesheet submission:</p>
+        {% endif %}
+        
+        <div class="timesheet-details">
+            <h2>Timesheet Status</h2>
+            <div class="timesheet-item">
+                <h3>
+                    Period: {{ timesheet.period_start|date:"F d" }} - {{ timesheet.period_end|date:"F d, Y" }}
+                    <span class="status-badge status-{{ timesheet.status|lower }}">
+                        {{ timesheet.status }}
+                    </span>
+                </h3>
+                <table>
+                    <tr>
+                        <th>Due Date</th>
+                        <td>{{ timesheet.due_date|date:"F d, Y g:i A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Time Remaining</th>
+                        <td>{{ timesheet.time_remaining }}</td>
+                    </tr>
+                    <tr>
+                        <th>Department</th>
+                        <td>{{ employee.department }}</td>
+                    </tr>
+                    <tr>
+                        <th>Supervisor</th>
+                        <td>{{ employee.supervisor }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="summary-details">
+            <h2>Time Summary</h2>
+            <div class="timesheet-item">
+                <h3>Hours Breakdown</h3>
+                <table>
+                    <tr>
+                        <th>Regular Hours</th>
+                        <td>{{ timesheet.regular_hours|hours_minutes }}</td>
+                    </tr>
+                    <tr>
+                        <th>Overtime Hours</th>
+                        <td>{{ timesheet.overtime_hours|hours_minutes }}</td>
+                    </tr>
+                    <tr>
+                        <th>Leave Hours</th>
+                        <td>{{ timesheet.leave_hours|hours_minutes }}</td>
+                    </tr>
+                    <tr>
+                        <th>Holiday Hours</th>
+                        <td>{{ timesheet.holiday_hours|hours_minutes }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Hours</th>
+                        <td><strong>{{ timesheet.total_hours|hours_minutes }}</strong></td>
+                    </tr>
+                </table>
+                
+                <h3>Completion Progress</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ timesheet.completion_percentage }}%">
+                        {{ timesheet.completion_percentage }}%
+                    </div>
+                </div>
+            </div>
+            
+            {% if timesheet.missing_days %}
+            <div class="timesheet-item">
+                <h3>Missing Entries</h3>
+                <ul>
+                    {% for day in timesheet.missing_days %}
+                    <li>{{ day|date:"l, F d, Y" }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            {% if timesheet.incomplete_entries %}
+            <div class="timesheet-item">
+                <h3>Incomplete Entries</h3>
+                <ul>
+                    {% for entry in timesheet.incomplete_entries %}
+                    <li>
+                        {{ entry.date|date:"l, F d" }}:
+                        {{ entry.missing_info }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if timesheet.status == "OVERDUE" %}
+        <div class="warning-details">
+            <h2>Important Notice</h2>
+            <p>Your timesheet is currently <strong>{{ timesheet.days_overdue }} days overdue</strong>. Please note:</p>
+            <ul>
+                <li>Late submissions may delay payroll processing</li>
+                <li>Multiple late submissions may affect performance evaluations</li>
+                <li>Your supervisor has been notified of the delay</li>
+            </ul>
+        </div>
+        {% endif %}
+        
+        <div class="timesheet-details">
+            <h2>Quick Tips</h2>
+            <ul>
+                <li>Fill in time entries daily for better accuracy</li>
+                <li>Use the mobile app for quick updates</li>
+                <li>Set up daily reminders in your calendar</li>
+                <li>Review entries before submission</li>
+                <li>Contact your supervisor if you need assistance</li>
+            </ul>
+        </div>
+        
+        <div class="timesheet-details">
+            <h2>Policy Reminders</h2>
+            <ul>
+                <li>Timesheets must be submitted by {{ policy.submission_deadline }}</li>
+                <li>All overtime must be pre-approved</li>
+                <li>Time entries should be accurate to the nearest {{ policy.time_increment }} minutes</li>
+                <li>Include detailed notes for any special circumstances</li>
+                <li>Report technical issues to IT support immediately</li>
+            </ul>
+        </div>
+        
+        <p>Available Actions:</p>
+        <ul>
+            <li>Complete missing entries</li>
+            <li>Review and submit timesheet</li>
+            <li>View submission history</li>
+            <li>Download timesheet reports</li>
+            <li>Contact supervisor</li>
+        </ul>
+        
+        <a href="{{ timesheet_portal_url }}" class="button">Access Timesheet Portal</a>
+        
+        {% if timesheet.next_period %}
+        <div class="note">
+            <strong>Next Period:</strong><br>
+            {{ timesheet.next_period.start_date|date:"F d" }} - {{ timesheet.next_period.end_date|date:"F d, Y" }}<br>
+            Due: {{ timesheet.next_period.due_date|date:"F d, Y g:i A" }}
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>For questions about timesheets, contact your supervisor or HR Team.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

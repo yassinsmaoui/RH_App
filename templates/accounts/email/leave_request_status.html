@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #2196F3;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .leave-details {
+            background-color: #e3f2fd;
+            border-left: 6px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .status-approved {
+            background-color: #e8f5e9;
+            border-left: 6px solid #4caf50;
+        }
+        .status-rejected {
+            background-color: #ffebee;
+            border-left: 6px solid #f44336;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .button-approved {
+            background-color: #4caf50;
+        }
+        .button-rejected {
+            background-color: #f44336;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Leave Request {{ leave_request.status|title }}</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ leave_request.employee.get_full_name }},</p>
+        
+        <p>Your leave request has been {{ leave_request.status|lower }}.</p>
+        
+        <div class="leave-details {% if leave_request.status == 'APPROVED' %}status-approved{% elif leave_request.status == 'REJECTED' %}status-rejected{% endif %}">
+            <h2>Leave Request Details</h2>
+            <table>
+                <tr>
+                    <th>Leave Type</th>
+                    <td>{{ leave_request.leave_type.name }}</td>
+                </tr>
+                <tr>
+                    <th>Start Date</th>
+                    <td>{{ leave_request.start_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>End Date</th>
+                    <td>{{ leave_request.end_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Duration</th>
+                    <td>{% leave_duration leave_request.start_date leave_request.end_date %} day(s)</td>
+                </tr>
+                <tr>
+                    <th>Reason</th>
+                    <td>{{ leave_request.reason }}</td>
+                </tr>
+                {% if leave_request.status == 'REJECTED' and leave_request.rejection_reason %}
+                <tr>
+                    <th>Rejection Reason</th>
+                    <td>{{ leave_request.rejection_reason }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        
+        {% if leave_request.status == 'APPROVED' %}
+        <div class="leave-details status-approved">
+            <h2>Leave Balance Update</h2>
+            <table>
+                <tr>
+                    <th>Previous Balance</th>
+                    <td>{{ leave_balance.total_days }} days</td>
+                </tr>
+                <tr>
+                    <th>Days Used</th>
+                    <td>{% leave_duration leave_request.start_date leave_request.end_date %} days</td>
+                </tr>
+                <tr>
+                    <th>Remaining Balance</th>
+                    <td>{{ leave_balance.remaining_days }} days</td>
+                </tr>
+            </table>
+        </div>
+        
+        <p>Please ensure to:</p>
+        <ul>
+            <li>Complete any pending work before your leave</li>
+            <li>Set up an out-of-office email response</li>
+            <li>Brief your team members about ongoing projects</li>
+            <li>Update your calendar to reflect your leave dates</li>
+        </ul>
+        {% endif %}
+        
+        {% if leave_request.status == 'REJECTED' %}
+        <p>If you need to discuss this decision or submit a new request, please contact your supervisor or the HR department.</p>
+        {% endif %}
+        
+        <a href="{{ leave_details_url }}" class="button {% if leave_request.status == 'APPROVED' %}button-approved{% elif leave_request.status == 'REJECTED' %}button-rejected{% endif %}">View Leave Details</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you have any questions, please contact the HR department.</p>
+        <p>&copy; {{ current_year }} HR Management System. All rights reserved.</p>
+    </div>
+</body>
+</html>

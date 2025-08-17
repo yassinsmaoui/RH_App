@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #ffd700;
+            color: #333;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .award-details {
+            background-color: #fff8e1;
+            border-left: 6px solid #ffd700;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .achievement {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .celebration {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #ffd700;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+        .testimonials {
+            background-color: #f3e5f5;
+            border-left: 6px solid #9c27b0;
+            padding: 15px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        .benefits {
+            background-color: #e0f2f1;
+            border-left: 6px solid #009688;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .certificate {
+            background-color: #fce4ec;
+            border-left: 6px solid #c2185b;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .quote {
+            font-style: italic;
+            color: #666;
+            margin: 20px 0;
+            padding: 10px 20px;
+            border-left: 4px solid #ffd700;
+        }
+        .social-share {
+            background-color: #ede7f6;
+            border-left: 6px solid #673ab7;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏆 Congratulations on Your Achievement! 🌟</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>Congratulations! We are delighted to announce that you have been awarded the <strong>{{ award.name }}</strong>. Your exceptional performance and dedication have not gone unnoticed, and we are proud to recognize your outstanding contribution to {{ company_name }}.</p>
+        
+        <div class="award-details">
+            <h2>Award Information</h2>
+            <table>
+                <tr>
+                    <th>Award Name</th>
+                    <td>{{ award.name }}</td>
+                </tr>
+                <tr>
+                    <th>Category</th>
+                    <td>{{ award.category }}</td>
+                </tr>
+                <tr>
+                    <th>Award Date</th>
+                    <td>{{ award.date|date:"F d, Y" }}</td>
+                </tr>
+                {% if award.monetary_value %}
+                <tr>
+                    <th>Monetary Value</th>
+                    <td>{{ award.monetary_value|currency }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <th>Presented By</th>
+                    <td>{{ presenter.name }} ({{ presenter.position }})</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="achievement">
+            <h2>Achievement Highlights</h2>
+            <p>{{ award.achievement_description }}</p>
+            <h3>Key Accomplishments:</h3>
+            <ul>
+                {% for accomplishment in accomplishments %}
+                <li>{{ accomplishment }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="testimonials">
+            <h2>What Others Say</h2>
+            {% for testimonial in testimonials %}
+            <div class="quote">
+                <p>"{{ testimonial.content }}"</p>
+                <p><strong>- {{ testimonial.author }} ({{ testimonial.position }})</strong></p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="celebration">
+            <h2>Award Ceremony Details</h2>
+            {% if ceremony.is_virtual %}
+            <p><strong>Virtual Ceremony</strong></p>
+            <ul>
+                <li>Date: {{ ceremony.date|date:"F d, Y" }}</li>
+                <li>Time: {{ ceremony.time|time:"g:i A" }} {{ ceremony.timezone }}</li>
+                <li>Platform: {{ ceremony.platform }}</li>
+                <li>Link: <a href="{{ ceremony.link }}">Join Ceremony</a></li>
+            </ul>
+            {% else %}
+            <p><strong>In-Person Ceremony</strong></p>
+            <ul>
+                <li>Date: {{ ceremony.date|date:"F d, Y" }}</li>
+                <li>Time: {{ ceremony.time|time:"g:i A" }}</li>
+                <li>Location: {{ ceremony.location }}</li>
+                <li>Dress Code: {{ ceremony.dress_code }}</li>
+            </ul>
+            {% endif %}
+        </div>
+        
+        <div class="benefits">
+            <h2>Award Benefits</h2>
+            <ul>
+                {% for benefit in award_benefits %}
+                <li>
+                    <strong>{{ benefit.title }}</strong>
+                    <p>{{ benefit.description }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="certificate">
+            <h2>Digital Certificate</h2>
+            <p>Your digital certificate is now available. You can:</p>
+            <ul>
+                <li>Download your certificate: <a href="{{ certificate.download_link }}">Download</a></li>
+                <li>View online: <a href="{{ certificate.view_link }}">View Certificate</a></li>
+                <li>Add to your professional profile</li>
+            </ul>
+        </div>
+        
+        <div class="social-share">
+            <h2>Share Your Achievement</h2>
+            <p>We encourage you to share this achievement with your network:</p>
+            <ul>
+                {% for platform in social_platforms %}
+                <li>
+                    <a href="{{ platform.share_link }}">Share on {{ platform.name }}</a>
+                    {% if platform.suggested_text %}
+                    <p><em>Suggested text:</em> {{ platform.suggested_text }}</p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <p>Next Steps:</p>
+        <ul>
+            <li>Confirm your attendance at the award ceremony</li>
+            <li>Download your digital certificate</li>
+            <li>Share your achievement with your network</li>
+            <li>Update your professional profiles</li>
+        </ul>
+        
+        <p>Once again, congratulations on this well-deserved recognition!</p>
+        
+        <a href="{{ hr_portal_url }}" class="button">Access HR Portal</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>For any questions about the award or ceremony, please contact the HR team.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

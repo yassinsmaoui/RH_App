@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #00695c, #00897b);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .assessment-section {
+            background-color: #e0f2f1;
+            border-left: 6px solid #00897b;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .skills-section {
+            background-color: #e8f5e9;
+            border-left: 6px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .action-section {
+            background-color: #fff3e0;
+            border-left: 6px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #00695c, #00897b);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .skill-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .skill-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .important-note {
+            background-color: #fce4ec;
+            border-left: 4px solid #e91e63;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #00695c, #00897b);
+            width: {{ completion_percentage }}%;
+            transition: width 0.5s ease-in-out;
+        }
+        .skill-tag {
+            display: inline-block;
+            background-color: #b2dfdb;
+            color: #004d40;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .radar-chart {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .comparison-table th {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Skill Assessment Report 📊</h1>
+        <p>Date: {{ assessment_date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="assessment-section">
+            <h2>Assessment Overview</h2>
+            <div class="info-card">
+                <h3>Assessment Details</h3>
+                <ul>
+                    <li><strong>Assessment Type:</strong> {{ assessment.type }}</li>
+                    <li><strong>Department:</strong> {{ assessment.department }}</li>
+                    <li><strong>Position:</strong> {{ assessment.position }}</li>
+                    <li><strong>Completion Date:</strong> {{ assessment.completion_date|date:"F d, Y" }}</li>
+                </ul>
+                
+                <div class="important-note">
+                    <h4>Overall Performance</h4>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <p>Overall Score: {{ assessment.overall_score }}%</p>
+                    <p>{{ assessment.performance_summary }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="skills-section">
+            <h2>Skill Analysis</h2>
+            <div class="info-card">
+                <h3>Core Competencies</h3>
+                <div class="skill-grid">
+                    {% for competency in core_competencies %}
+                    <div class="skill-item">
+                        <h4>{{ competency.name }}</h4>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ competency.score }}%;"></div>
+                        </div>
+                        <p>Score: {{ competency.score }}%</p>
+                        <p>{{ competency.feedback }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <h3>Technical Skills</h3>
+                <div class="skill-grid">
+                    {% for skill in technical_skills %}
+                    <div class="skill-item">
+                        <h4>{{ skill.name }}</h4>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ skill.score }}%;"></div>
+                        </div>
+                        <p>Score: {{ skill.score }}%</p>
+                        <p>{{ skill.feedback }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <h3>Skill Gap Analysis</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Skill Area</th>
+                            <th>Current Level</th>
+                            <th>Required Level</th>
+                            <th>Gap</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for gap in skill_gaps %}
+                        <tr>
+                            <td>{{ gap.skill_area }}</td>
+                            <td>{{ gap.current_level }}</td>
+                            <td>{{ gap.required_level }}</td>
+                            <td>{{ gap.gap_analysis }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="action-section">
+            <h2>Development Plan</h2>
+            <div class="info-card">
+                <h3>Recommended Actions</h3>
+                <ul>
+                    {% for action in recommended_actions %}
+                    <li>
+                        <strong>{{ action.area }}:</strong>
+                        <br>
+                        {{ action.recommendation }}
+                        <br>
+                        <span class="skill-tag">Priority: {{ action.priority }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Learning Resources</h3>
+                <ul>
+                    {% for resource in learning_resources %}
+                    <li>
+                        <strong>{{ resource.title }}:</strong>
+                        <br>
+                        <a href="{{ resource.link }}">{{ resource.description }}</a>
+                        <br>
+                        <span class="skill-tag">{{ resource.type }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="important-note">
+                    <h4>Next Steps</h4>
+                    <ol>
+                        {% for step in next_steps %}
+                        <li>{{ step }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                
+                <a href="{{ development_plan_link }}" class="button">View Detailed Development Plan</a>
+            </div>
+        </div>
+        
+        <div class="assessment-section">
+            <h2>Additional Information</h2>
+            <div class="info-card">
+                <h3>Assessment Methodology</h3>
+                <p>{{ assessment_methodology }}</p>
+                
+                <h3>Future Assessments</h3>
+                <ul>
+                    {% for assessment in future_assessments %}
+                    <li>
+                        <strong>{{ assessment.type }}:</strong>
+                        <br>
+                        Date: {{ assessment.date|date:"F d, Y" }}
+                        <br>
+                        Focus Areas: {{ assessment.focus_areas }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="important-note">
+                    <h4>Support Resources</h4>
+                    <ul>
+                        <li>Learning & Development Team: {{ learning_team_email }}</li>
+                        <li>Technical Support: {{ tech_support_email }}</li>
+                        <li>Manager: {{ manager_name }} ({{ manager_email }})</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>This assessment is part of your continuous development journey at {{ company_name }}.</p>
+        <p>Access your full assessment history: {{ assessment_portal_link }}</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

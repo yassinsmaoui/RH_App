@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #FF5722;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .attendance-details {
+            background-color: #fbe9e7;
+            border-left: 6px solid #FF5722;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .policy-section {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976D2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #FF5722;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+        .warning-text {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        .late-time {
+            color: #f57c00;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Attendance Irregularity Notice</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>This email is to notify you about an attendance irregularity that has been recorded in our system.</p>
+        
+        <div class="attendance-details">
+            <h2>Irregularity Details</h2>
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <td>{{ attendance.date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Type</th>
+                    <td class="warning-text">{{ attendance.status|title }}</td>
+                </tr>
+                {% if attendance.check_in %}
+                <tr>
+                    <th>Check-in Time</th>
+                    <td>{{ attendance.check_in|time:"H:i" }}</td>
+                </tr>
+                {% endif %}
+                {% if attendance.check_out %}
+                <tr>
+                    <th>Check-out Time</th>
+                    <td>{{ attendance.check_out|time:"H:i" }}</td>
+                </tr>
+                {% endif %}
+                {% if attendance.late_arrival %}
+                <tr>
+                    <th>Late By</th>
+                    <td class="late-time">{{ attendance.late_minutes|hours_minutes }}</td>
+                </tr>
+                {% endif %}
+                {% if attendance.early_departure %}
+                <tr>
+                    <th>Left Early By</th>
+                    <td class="late-time">{{ attendance.early_minutes|hours_minutes }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        
+        <div class="policy-section">
+            <h2>Attendance Policy Reminder</h2>
+            <table>
+                <tr>
+                    <th>Work Hours</th>
+                    <td>{{ policy.work_start_time|time:"H:i" }} - {{ policy.work_end_time|time:"H:i" }}</td>
+                </tr>
+                <tr>
+                    <th>Grace Period</th>
+                    <td>{{ policy.grace_period_minutes }} minutes</td>
+                </tr>
+                <tr>
+                    <th>Half Day Policy</th>
+                    <td>More than {{ policy.half_day_threshold_minutes|hours_minutes }} late/early departure</td>
+                </tr>
+                <tr>
+                    <th>Absent Policy</th>
+                    <td>More than {{ policy.absent_threshold_minutes|hours_minutes }} late/early departure</td>
+                </tr>
+            </table>
+        </div>
+        
+        <p>Required Actions:</p>
+        <ul>
+            {% if attendance.status == 'LATE' or attendance.status == 'EARLY_DEPARTURE' %}
+            <li>Submit a justification for the {{ attendance.status|lower|replace:"_"," " }} through the HR portal</li>
+            <li>Discuss with your supervisor if this is a recurring issue</li>
+            <li>Ensure to follow the standard working hours</li>
+            {% elif attendance.status == 'ABSENT' %}
+            <li>Submit a leave request if this was a planned absence</li>
+            <li>Provide a medical certificate if this was due to illness</li>
+            <li>Contact your supervisor to discuss your absence</li>
+            {% endif %}
+            <li>Review the attendance policy guidelines</li>
+        </ul>
+        
+        <p class="warning-text">Please note: Repeated attendance irregularities may affect your performance evaluation and benefits.</p>
+        
+        <a href="{{ attendance_details_url }}" class="button">View Attendance Details</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you believe this notification was sent in error, please contact the HR department.</p>
+        <p>&copy; {{ current_year }} HR Management System. All rights reserved.</p>
+    </div>
+</body>
+</html>

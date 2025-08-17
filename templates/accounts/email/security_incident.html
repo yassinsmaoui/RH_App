@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #c62828, #d32f2f);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .incident-section {
+            background-color: #ffebee;
+            border-left: 6px solid #c62828;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .action-section {
+            background-color: #fff3e0;
+            border-left: 6px solid #ef6c00;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .resources-section {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #c62828, #d32f2f);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .severity-tag {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .severity-high {
+            background-color: #ffcdd2;
+            color: #c62828;
+        }
+        .severity-medium {
+            background-color: #ffe0b2;
+            color: #ef6c00;
+        }
+        .severity-low {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+        }
+        .timeline {
+            position: relative;
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-left: 2px solid #c62828;
+            padding-left: 20px;
+        }
+        .timeline-item:last-child {
+            border-left: none;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -11px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background-color: #c62828;
+            border-radius: 50%;
+        }
+        .important-note {
+            background-color: #ffebee;
+            border-left: 4px solid #c62828;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .checklist {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .checklist li {
+            margin-bottom: 10px;
+            padding-left: 30px;
+            position: relative;
+        }
+        .checklist li::before {
+            content: '⚠️';
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Security Incident Alert 🚨</h1>
+        <p>Date: {{ incident_date|date:"F d, Y H:i" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="incident-section">
+            <h2>Incident Details</h2>
+            <div class="info-card">
+                <h3>Incident Overview</h3>
+                <div class="important-note">
+                    <p><strong>Type:</strong> {{ incident_type }}</p>
+                    <p><strong>Status:</strong> {{ incident_status }}</p>
+                    <span class="severity-tag severity-{{ incident_severity|lower }}">{{ incident_severity }} Severity</span>
+                </div>
+                
+                <h3>Description</h3>
+                <p>{{ incident_description }}</p>
+                
+                <h3>Impact Assessment</h3>
+                <ul>
+                    {% for impact in impact_details %}
+                    <li>
+                        <strong>{{ impact.area }}:</strong>
+                        {{ impact.description }}
+                        <span class="severity-tag severity-{{ impact.severity|lower }}">{{ impact.severity }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="action-section">
+            <h2>Required Actions</h2>
+            <div class="info-card">
+                <h3>Immediate Actions</h3>
+                <div class="timeline">
+                    {% for action in immediate_actions %}
+                    <div class="timeline-item">
+                        <h4>{{ action.title }}</h4>
+                        <p>{{ action.description }}</p>
+                        {% if action.deadline %}
+                        <p><strong>Deadline:</strong> {{ action.deadline|date:"F d, Y H:i" }}</p>
+                        {% endif %}
+                        <span class="severity-tag severity-{{ action.priority|lower }}">{{ action.priority }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <h3>Security Checklist</h3>
+                <ul class="checklist">
+                    {% for item in security_checklist %}
+                    <li>
+                        <strong>{{ item.title }}</strong>
+                        <br>
+                        {{ item.description }}
+                        {% if item.deadline %}
+                        <br>
+                        <strong>Complete by:</strong> {{ item.deadline|date:"F d, Y H:i" }}
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Prevention Measures</h3>
+                <ul>
+                    {% for measure in prevention_measures %}
+                    <li>
+                        <strong>{{ measure.title }}</strong>
+                        <br>
+                        {{ measure.description }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="resources-section">
+            <h2>Support Resources</h2>
+            <div class="info-card">
+                <h3>Emergency Contacts</h3>
+                <ul>
+                    {% for contact in emergency_contacts %}
+                    <li>
+                        <strong>{{ contact.role }}</strong>
+                        <br>
+                        {{ contact.name }}
+                        <br>
+                        {{ contact.contact_info }}
+                        {% if contact.availability %}
+                        <br>
+                        <strong>Available:</strong> {{ contact.availability }}
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Helpful Resources</h3>
+                <ul>
+                    {% for resource in helpful_resources %}
+                    <li>
+                        <strong>{{ resource.title }}</strong>
+                        <br>
+                        {{ resource.description }}
+                        <br>
+                        <a href="{{ resource.link }}">Access Resource</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Reporting</h3>
+                <div class="important-note">
+                    <p>If you notice any suspicious activity or have additional information about this incident, please report it immediately through:</p>
+                    <ul>
+                        <li>Security Portal: <a href="{{ security_portal_link }}">{{ security_portal_name }}</a></li>
+                        <li>Emergency Hotline: {{ emergency_hotline }}</li>
+                        <li>Email: {{ security_email }}</li>
+                    </ul>
+                </div>
+                
+                <a href="{{ incident_portal_link }}" class="button">View Incident Details</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>IT Security Department</p>
+        <p>Security Operations Center: {{ soc_contact }}</p>
+        <p>24/7 Support: {{ support_contact }}</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

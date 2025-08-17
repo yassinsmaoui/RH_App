@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Django Development Server",
+			"type": "shell",
+			"command": "& \"C:/Users/A/Desktop/Digitall Skills/RH_App/venv/Scripts/python.exe\" manage.py runserver",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}

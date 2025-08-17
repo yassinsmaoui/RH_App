@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1976d2, #2196f3);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .program-section {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .opportunity-section {
+            background-color: #e8f5e9;
+            border-left: 6px solid #43a047;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .impact-section {
+            background-color: #fff3e0;
+            border-left: 6px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #1976d2, #2196f3);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .opportunity-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .opportunity-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .important-note {
+            background-color: #fce4ec;
+            border-left: 4px solid #e91e63;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #1976d2, #2196f3);
+            width: {{ impact_percentage }}%;
+            transition: width 0.5s ease-in-out;
+        }
+        .cause-tag {
+            display: inline-block;
+            background-color: #bbdefb;
+            color: #0d47a1;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .impact-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .stat-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Volunteering Program Update 🤝</h1>
+        <p>Date: {{ notification_date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="program-section">
+            <h2>Program Overview</h2>
+            <div class="info-card">
+                <h3>Your Volunteering Journey</h3>
+                <div class="impact-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ total_hours }}</div>
+                        <p>Hours Contributed</p>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ projects_completed }}</div>
+                        <p>Projects Completed</p>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ lives_impacted }}</div>
+                        <p>Lives Impacted</p>
+                    </div>
+                </div>
+                
+                <div class="important-note">
+                    <h4>Recent Achievements</h4>
+                    <ul>
+                        {% for achievement in achievements %}
+                        <li>
+                            <strong>{{ achievement.title }}</strong>
+                            <br>
+                            {{ achievement.description }}
+                            <span class="cause-tag">{{ achievement.category }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="opportunity-section">
+            <h2>Upcoming Opportunities</h2>
+            <div class="info-card">
+                <div class="opportunity-grid">
+                    {% for opportunity in upcoming_opportunities %}
+                    <div class="opportunity-item">
+                        <h3>{{ opportunity.title }}</h3>
+                        <p>{{ opportunity.description }}</p>
+                        <p><strong>Date:</strong> {{ opportunity.date|date:"F d, Y" }}</p>
+                        <p><strong>Time:</strong> {{ opportunity.time }}</p>
+                        <p><strong>Location:</strong> {{ opportunity.location }}</p>
+                        <p><strong>Skills Needed:</strong> {{ opportunity.skills_needed }}</p>
+                        <span class="cause-tag">{{ opportunity.cause }}</span>
+                        <br>
+                        <a href="{{ opportunity.signup_link }}" class="button">Sign Up</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <h3>Featured Causes</h3>
+                <ul>
+                    {% for cause in featured_causes %}
+                    <li>
+                        <strong>{{ cause.name }}</strong>
+                        <br>
+                        {{ cause.description }}
+                        <br>
+                        <span class="cause-tag">{{ cause.category }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="impact-section">
+            <h2>Your Impact</h2>
+            <div class="info-card">
+                <h3>Impact Summary</h3>
+                <ul>
+                    {% for impact in impact_summary %}
+                    <li>
+                        <strong>{{ impact.area }}</strong>
+                        <br>
+                        {{ impact.description }}
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ impact.percentage }}%;"></div>
+                        </div>
+                        <p>{{ impact.metric }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Testimonials</h3>
+                <div class="important-note">
+                    {% for testimonial in testimonials %}
+                    <blockquote>
+                        "{{ testimonial.quote }}"
+                        <br>
+                        - {{ testimonial.author }}, {{ testimonial.organization }}
+                    </blockquote>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="program-section">
+            <h2>Program Resources</h2>
+            <div class="info-card">
+                <h3>Available Support</h3>
+                <ul>
+                    {% for resource in support_resources %}
+                    <li>
+                        <strong>{{ resource.name }}</strong>
+                        <br>
+                        {{ resource.description }}
+                        <br>
+                        <a href="{{ resource.link }}">Learn More</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Volunteer Benefits</h3>
+                <ul>
+                    {% for benefit in volunteer_benefits %}
+                    <li>
+                        <strong>{{ benefit.name }}</strong>
+                        <br>
+                        {{ benefit.description }}
+                        <span class="cause-tag">{{ benefit.status }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="important-note">
+                    <h4>Important Reminders</h4>
+                    <ul>
+                        {% for reminder in important_reminders %}
+                        <li>{{ reminder }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <a href="{{ volunteering_portal_link }}" class="button">Access Volunteering Portal</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Volunteering Program Coordinator: {{ coordinator_name }}</p>
+        <p>Contact: {{ coordinator_email }}</p>
+        <p>Emergency Support: {{ emergency_contact }}</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

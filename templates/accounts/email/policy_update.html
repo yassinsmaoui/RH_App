@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #5c6bc0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .update-summary {
+            background-color: #e8eaf6;
+            border-left: 6px solid #5c6bc0;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .changes {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .action-required {
+            background-color: #ffebee;
+            border-left: 6px solid #d32f2f;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #5c6bc0;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+        .important-note {
+            background-color: #fff3e0;
+            border-left: 6px solid #f57c00;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .comparison {
+            background-color: #f3e5f5;
+            border-left: 6px solid #9c27b0;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .resources {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .timeline {
+            background-color: #fce4ec;
+            border-left: 6px solid #c2185b;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .policy-section {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: white;
+        }
+        .policy-section h3 {
+            color: #5c6bc0;
+            margin-top: 0;
+        }
+        .highlight {
+            background-color: #fff9c4;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .change-type {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .change-type.new {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+        }
+        .change-type.modified {
+            background-color: #fff9c4;
+            color: #f57f17;
+        }
+        .change-type.removed {
+            background-color: #ffcdd2;
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Policy Update Notification</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>We are writing to inform you about important updates to our company policies. These changes have been made to {{ update_reason }} and will take effect from {{ effective_date|date:"F d, Y" }}.</p>
+        
+        <div class="update-summary">
+            <h2>Update Overview</h2>
+            <table>
+                <tr>
+                    <th>Policy Category</th>
+                    <td>{{ policy_category }}</td>
+                </tr>
+                <tr>
+                    <th>Effective Date</th>
+                    <td>{{ effective_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Acknowledgment Required By</th>
+                    <td>{{ acknowledgment_deadline|date:"F d, Y" }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="changes">
+            <h2>Policy Changes</h2>
+            
+            {% for section in policy_sections %}
+            <div class="policy-section">
+                <h3>{{ section.title }}</h3>
+                {% if section.changes %}
+                <h4>Key Changes:</h4>
+                <ul>
+                    {% for change in section.changes %}
+                    <li>
+                        <span class="change-type {{ change.type }}">{{ change.type|upper }}</span>
+                        <strong>{{ change.title }}</strong>
+                        <p>{{ change.description }}</p>
+                        {% if change.old_policy and change.new_policy %}
+                        <div class="comparison">
+                            <p><strong>Previous Policy:</strong> {{ change.old_policy }}</p>
+                            <p><strong>New Policy:</strong> <span class="highlight">{{ change.new_policy }}</span></p>
+                        </div>
+                        {% endif %}
+                        {% if change.rationale %}
+                        <p><em>Rationale: {{ change.rationale }}</em></p>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                
+                {% if section.impact %}
+                <h4>Impact on Employees:</h4>
+                <ul>
+                    {% for impact in section.impact %}
+                    <li>{{ impact }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if action_required %}
+        <div class="action-required">
+            <h2>Required Actions</h2>
+            <p>Please complete the following actions by {{ acknowledgment_deadline|date:"F d, Y" }}:</p>
+            <ol>
+                {% for action in required_actions %}
+                <li>
+                    <strong>{{ action.title }}</strong>
+                    <p>{{ action.description }}</p>
+                    {% if action.deadline %}
+                    <p><em>Deadline: {{ action.deadline|date:"F d, Y" }}</em></p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ol>
+        </div>
+        {% endif %}
+        
+        <div class="timeline">
+            <h2>Implementation Timeline</h2>
+            <ul>
+                {% for milestone in timeline_milestones %}
+                <li>
+                    <strong>{{ milestone.date|date:"F d, Y" }}</strong>: {{ milestone.description }}
+                    {% if milestone.notes %}
+                    <p><em>{{ milestone.notes }}</em></p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="resources">
+            <h2>Additional Resources</h2>
+            <ul>
+                {% for resource in additional_resources %}
+                <li>
+                    <strong>{{ resource.title }}</strong>
+                    <p>{{ resource.description }}</p>
+                    {% if resource.link %}
+                    <p>Access: <a href="{{ resource.link }}">{{ resource.link_text }}</a></p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="important-note">
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>Review all policy changes carefully</li>
+                <li>Acknowledge receipt by the deadline</li>
+                <li>Discuss any concerns with your manager</li>
+                <li>Keep a copy for your records</li>
+                <li>Share feedback through appropriate channels</li>
+            </ul>
+        </div>
+        
+        <p>Next Steps:</p>
+        <ul>
+            <li>Review the policy changes in detail</li>
+            <li>Acknowledge receipt by {{ acknowledgment_deadline|date:"F d, Y" }}</li>
+            <li>Attend policy briefing session if scheduled</li>
+            <li>Update your work practices as needed</li>
+            <li>Seek clarification if needed</li>
+        </ul>
+        
+        <a href="{{ policy_portal_url }}" class="button">Review and Acknowledge Policies</a>
+        
+        {% if briefing_session %}
+        <p><small>Join our policy briefing session on {{ briefing_session.date|date:"F d, Y" }} at {{ briefing_session.time|time:"g:i A" }}. 
+        <a href="{{ briefing_session.registration_link }}">Register here</a></small></p>
+        {% endif %}
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you have any questions about these policy changes or need clarification, please contact the HR Policy team.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

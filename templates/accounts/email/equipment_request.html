@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #3f51b5, #2196f3);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .request-details {
+            background-color: #e8eaf6;
+            border-left: 6px solid #3f51b5;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .equipment-details {
+            background-color: #e3f2fd;
+            border-left: 6px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .status-details {
+            background-color: #e8f5e9;
+            border-left: 6px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #3f51b5, #2196f3);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        .status-approved {
+            background-color: #e8f5e9;
+            color: #4caf50;
+        }
+        .status-pending {
+            background-color: #fff3e0;
+            color: #ff9800;
+        }
+        .status-rejected {
+            background-color: #ffebee;
+            color: #f44336;
+        }
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .equipment-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .equipment-icon {
+            font-size: 24px;
+            color: #3f51b5;
+            margin-bottom: 10px;
+        }
+        .timeline {
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #3f51b5;
+        }
+        .timeline-item:after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 15px;
+            width: 2px;
+            height: calc(100% + 5px);
+            background-color: #3f51b5;
+        }
+        .timeline-item:last-child:after {
+            display: none;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💻 Equipment Request</h1>
+        <p>Request #{{ request.id }}</p>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ recipient.get_full_name }},</p>
+        
+        {% if is_requester %}
+        <p>Your equipment request has been {{ request.status }}.</p>
+        {% else %}
+        <p>A new equipment request has been submitted for your review.</p>
+        {% endif %}
+        
+        <div class="request-details">
+            <h2>Request Details</h2>
+            <div class="info-card">
+                <p>
+                    <strong>Status:</strong>
+                    <span class="status-badge status-{{ request.status|lower }}">{{ request.status }}</span>
+                </p>
+                
+                <h3>Request Information</h3>
+                <ul>
+                    <li><strong>Requester:</strong> {{ requester.get_full_name }}</li>
+                    <li><strong>Department:</strong> {{ requester.department }}</li>
+                    <li><strong>Position:</strong> {{ requester.position }}</li>
+                    <li><strong>Request Date:</strong> {{ request.submission_date|date:"F d, Y" }}</li>
+                    <li><strong>Priority Level:</strong> {{ request.priority }}</li>
+                </ul>
+                
+                {% if request.reason %}
+                <h3>Reason for Request</h3>
+                <p>{{ request.reason }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="equipment-details">
+            <h2>Equipment Details</h2>
+            <div class="equipment-grid">
+                {% for item in requested_equipment %}
+                <div class="equipment-item">
+                    <div class="equipment-icon">{{ item.icon }}</div>
+                    <h3>{{ item.name }}</h3>
+                    <p><strong>Category:</strong> {{ item.category }}</p>
+                    <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+                    {% if item.specifications %}
+                    <p><strong>Specifications:</strong> {{ item.specifications }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        {% if request.status == 'APPROVED' %}
+        <div class="status-details">
+            <h2>Approval Details</h2>
+            <div class="info-card">
+                <h3>Approved By</h3>
+                <ul>
+                    <li><strong>Name:</strong> {{ approver.get_full_name }}</li>
+                    <li><strong>Position:</strong> {{ approver.position }}</li>
+                    <li><strong>Approval Date:</strong> {{ request.approval_date|date:"F d, Y" }}</li>
+                </ul>
+                
+                {% if request.approval_notes %}
+                <h3>Approval Notes</h3>
+                <p>{{ request.approval_notes }}</p>
+                {% endif %}
+                
+                <h3>Equipment Assignment</h3>
+                <ul>
+                    <li><strong>Expected Delivery:</strong> {{ request.delivery_date|date:"F d, Y" }}</li>
+                    <li><strong>Asset Tags:</strong> {{ request.asset_tags }}</li>
+                    <li><strong>Setup Location:</strong> {{ request.setup_location }}</li>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if request.status == 'REJECTED' %}
+        <div class="status-details">
+            <h2>Rejection Details</h2>
+            <div class="info-card">
+                <h3>Rejected By</h3>
+                <ul>
+                    <li><strong>Name:</strong> {{ rejector.get_full_name }}</li>
+                    <li><strong>Position:</strong> {{ rejector.position }}</li>
+                    <li><strong>Rejection Date:</strong> {{ request.rejection_date|date:"F d, Y" }}</li>
+                </ul>
+                
+                {% if request.rejection_reason %}
+                <h3>Reason for Rejection</h3>
+                <p>{{ request.rejection_reason }}</p>
+                {% endif %}
+                
+                {% if request.alternatives %}
+                <h3>Alternative Solutions</h3>
+                <ul>
+                    {% for alternative in request.alternatives %}
+                    <li>{{ alternative }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if request.status == 'APPROVED' %}
+        <div class="request-details">
+            <h2>Next Steps</h2>
+            <div class="info-card">
+                <h3>Equipment Setup Timeline</h3>
+                <ul class="timeline">
+                    {% for step in setup_timeline %}
+                    <li class="timeline-item">
+                        <strong>{{ step.title }}</strong><br>
+                        {{ step.date|date:"F d, Y" }}<br>
+                        <small>{{ step.description }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Required Actions</h3>
+                <ul class="checklist">
+                    <li>Review equipment usage guidelines</li>
+                    <li>Sign equipment acceptance form</li>
+                    <li>Complete equipment training (if required)</li>
+                    <li>Schedule setup appointment</li>
+                </ul>
+                
+                <a href="{{ acceptance_form_link }}" class="button">Sign Acceptance Form</a>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="equipment-details">
+            <h2>Equipment Policies</h2>
+            <div class="info-card">
+                <h3>Usage Guidelines</h3>
+                <ul>
+                    <li>Equipment is company property and must be returned upon request</li>
+                    <li>Report any damage or issues immediately</li>
+                    <li>Follow security protocols and guidelines</li>
+                    <li>Regular maintenance is required</li>
+                </ul>
+                
+                <h3>Support Information</h3>
+                <p>
+                    <strong>IT Support:</strong><br>
+                    {{ it_support.name }}<br>
+                    Email: {{ it_support.email }}<br>
+                    Phone: {{ it_support.phone }}
+                </p>
+                
+                <h3>Helpful Links</h3>
+                <ul>
+                    <li><a href="{{ equipment_policy_link }}">Equipment Policy</a></li>
+                    <li><a href="{{ maintenance_guide_link }}">Maintenance Guide</a></li>
+                    <li><a href="{{ support_portal_link }}">IT Support Portal</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>For any questions or concerns, please contact the IT Support team.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

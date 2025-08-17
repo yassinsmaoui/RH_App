@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #6a1b9a, #8e24aa);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .program-section {
+            background-color: #f3e5f5;
+            border-left: 6px solid #8e24aa;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .mentor-section {
+            background-color: #e8f5e9;
+            border-left: 6px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .action-section {
+            background-color: #fff3e0;
+            border-left: 6px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #6a1b9a, #8e24aa);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .profile-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .important-note {
+            background-color: #fce4ec;
+            border-left: 4px solid #e91e63;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .timeline {
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #8e24aa;
+        }
+        .timeline-item:after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 15px;
+            width: 2px;
+            height: calc(100% + 5px);
+            background-color: #8e24aa;
+        }
+        .timeline-item:last-child:after {
+            display: none;
+        }
+        .skill-tag {
+            display: inline-block;
+            background-color: #e1bee7;
+            color: #4a148c;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #6a1b9a, #8e24aa);
+            width: {{ progress_percentage }}%;
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Welcome to the Mentorship Program! 🌟</h1>
+        <p>Date: {{ notification_date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="program-section">
+            <h2>Program Overview</h2>
+            <div class="info-card">
+                <h3>Program Details</h3>
+                <ul>
+                    <li><strong>Program Name:</strong> {{ program.name }}</li>
+                    <li><strong>Duration:</strong> {{ program.duration }}</li>
+                    <li><strong>Start Date:</strong> {{ program.start_date|date:"F d, Y" }}</li>
+                    <li><strong>End Date:</strong> {{ program.end_date|date:"F d, Y" }}</li>
+                </ul>
+                
+                <div class="important-note">
+                    <h4>Program Objectives</h4>
+                    <ul>
+                        {% for objective in program.objectives %}
+                        <li>{{ objective }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mentor-section">
+            <h2>Your Mentorship Match</h2>
+            <div class="info-card">
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <h3>Your Mentor</h3>
+                        <img src="{{ mentor.profile_image }}" alt="Mentor Profile" style="width: 100px; height: 100px; border-radius: 50%;">
+                        <h4>{{ mentor.name }}</h4>
+                        <p>{{ mentor.position }}</p>
+                        <p>{{ mentor.department }}</p>
+                        
+                        <h4>Expertise Areas</h4>
+                        <div>
+                            {% for skill in mentor.skills %}
+                            <span class="skill-tag">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="profile-item">
+                        <h3>Your Profile</h3>
+                        <img src="{{ mentee.profile_image }}" alt="Your Profile" style="width: 100px; height: 100px; border-radius: 50%;">
+                        <h4>{{ mentee.name }}</h4>
+                        <p>{{ mentee.position }}</p>
+                        <p>{{ mentee.department }}</p>
+                        
+                        <h4>Development Goals</h4>
+                        <div>
+                            {% for goal in mentee.development_goals %}
+                            <span class="skill-tag">{{ goal }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="important-note">
+                    <h4>Why You Were Matched</h4>
+                    <p>{{ matching_rationale }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="program-section">
+            <h2>Program Structure</h2>
+            <div class="info-card">
+                <h3>Key Milestones</h3>
+                <ul class="timeline">
+                    {% for milestone in program_milestones %}
+                    <li class="timeline-item">
+                        <strong>{{ milestone.title }}</strong>
+                        <br>
+                        {{ milestone.description }}
+                        <br>
+                        Date: {{ milestone.date|date:"F d, Y" }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Meeting Schedule</h3>
+                <ul>
+                    {% for meeting in scheduled_meetings %}
+                    <li>
+                        <strong>{{ meeting.type }}</strong>
+                        <br>
+                        Date: {{ meeting.date|date:"F d, Y" }} at {{ meeting.time }}
+                        <br>
+                        {% if meeting.virtual %}
+                        <a href="{{ meeting.link }}">Join Meeting</a>
+                        {% else %}
+                        Location: {{ meeting.location }}
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="action-section">
+            <h2>Getting Started</h2>
+            <div class="info-card">
+                <h3>Next Steps</h3>
+                <ol>
+                    {% for step in next_steps %}
+                    <li>{{ step }}</li>
+                    {% endfor %}
+                </ol>
+                
+                <h3>Available Resources</h3>
+                <ul>
+                    {% for resource in program_resources %}
+                    <li>
+                        <strong>{{ resource.title }}:</strong>
+                        <br>
+                        <a href="{{ resource.link }}">{{ resource.description }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="important-note">
+                    <h4>Program Guidelines</h4>
+                    <ul>
+                        {% for guideline in program_guidelines %}
+                        <li>{{ guideline }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <a href="{{ mentorship_portal_link }}" class="button">Access Mentorship Portal</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>For program support: {{ program_support_email }}</p>
+        <p>Mentorship Program Coordinator: {{ coordinator_name }}</p>
+        <p>Program Resources: {{ resources_link }}</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #2e7d32;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .contract-details {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .terms-changes {
+            background-color: #f3e5f5;
+            border-left: 6px solid #9c27b0;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .compensation {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2e7d32;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+        .important-note {
+            background-color: #fff3e0;
+            border-left: 6px solid #f57c00;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .timeline {
+            background-color: #e0f2f1;
+            border-left: 6px solid #009688;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .benefits {
+            background-color: #fce4ec;
+            border-left: 6px solid #c2185b;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Contract Renewal Notice</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>We are pleased to inform you that {{ company_name }} would like to renew your employment contract. This letter outlines the terms and conditions of your contract renewal.</p>
+        
+        <div class="contract-details">
+            <h2>Contract Information</h2>
+            <table>
+                <tr>
+                    <th>Employee Name</th>
+                    <td>{{ employee.get_full_name }}</td>
+                </tr>
+                <tr>
+                    <th>Employee ID</th>
+                    <td>{{ employee.employee_id }}</td>
+                </tr>
+                <tr>
+                    <th>Position</th>
+                    <td>{{ employee.position.title }}</td>
+                </tr>
+                <tr>
+                    <th>Department</th>
+                    <td>{{ employee.department.name }}</td>
+                </tr>
+                <tr>
+                    <th>Current Contract End</th>
+                    <td>{{ current_contract.end_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>New Contract Start</th>
+                    <td>{{ new_contract.start_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>New Contract End</th>
+                    <td>{{ new_contract.end_date|date:"F d, Y" }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="terms-changes">
+            <h2>Contract Terms</h2>
+            {% if terms_changes %}
+            <h3>Changes from Previous Contract</h3>
+            <ul>
+                {% for change in terms_changes %}
+                <li>
+                    <strong>{{ change.category }}</strong>
+                    <p>Previous: {{ change.previous }}</p>
+                    <p>New: {{ change.new }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>All terms and conditions remain the same as your current contract.</p>
+            {% endif %}
+        </div>
+        
+        <div class="compensation">
+            <h2>Compensation Package</h2>
+            <table>
+                <tr>
+                    <th>Base Salary</th>
+                    <td>{{ compensation.base_salary|currency }}</td>
+                </tr>
+                {% if compensation.bonus %}
+                <tr>
+                    <th>Performance Bonus</th>
+                    <td>{{ compensation.bonus.description }}</td>
+                </tr>
+                {% endif %}
+                {% for allowance in compensation.allowances %}
+                <tr>
+                    <th>{{ allowance.name }}</th>
+                    <td>{{ allowance.amount|currency }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        
+        <div class="benefits">
+            <h2>Benefits Package</h2>
+            <ul>
+                {% for benefit in benefits %}
+                <li>
+                    <strong>{{ benefit.name }}</strong>
+                    <p>{{ benefit.description }}</p>
+                    {% if benefit.changes %}
+                    <p><em>Changes: {{ benefit.changes }}</em></p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="timeline">
+            <h2>Renewal Timeline</h2>
+            <ul>
+                <li><strong>Contract Review Period:</strong> {{ review_period_start|date:"F d, Y" }} to {{ review_period_end|date:"F d, Y" }}</li>
+                <li><strong>Acceptance Deadline:</strong> {{ acceptance_deadline|date:"F d, Y" }}</li>
+                <li><strong>Document Submission Deadline:</strong> {{ document_deadline|date:"F d, Y" }}</li>
+                <li><strong>New Contract Effective Date:</strong> {{ new_contract.start_date|date:"F d, Y" }}</li>
+            </ul>
+        </div>
+        
+        <div class="important-note">
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>Please review all terms and conditions carefully</li>
+                <li>All changes are subject to your acceptance</li>
+                <li>You have the right to negotiate terms within the review period</li>
+                <li>Original signed documents are required for processing</li>
+                <li>Failure to respond by the acceptance deadline may affect the renewal offer</li>
+            </ul>
+        </div>
+        
+        <p>Required Actions:</p>
+        <ul>
+            <li>Review contract terms and conditions</li>
+            <li>Schedule meeting with HR for any clarifications by {{ clarification_deadline|date:"F d, Y" }}</li>
+            <li>Submit signed contract documents by {{ document_deadline|date:"F d, Y" }}</li>
+            <li>Update personal information if needed</li>
+            <li>Review and select benefit options for the new term</li>
+        </ul>
+        
+        <a href="{{ hr_portal_url }}" class="button">Access HR Portal</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you have any questions about your contract renewal, please contact your HR representative.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

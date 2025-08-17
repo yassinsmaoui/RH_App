@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1976d2, #2196f3);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .response-section {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .action-section {
+            background-color: #e8f5e9;
+            border-left: 6px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .support-section {
+            background-color: #f3e5f5;
+            border-left: 6px solid #9c27b0;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #1976d2, #2196f3);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .timeline {
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #1976d2;
+        }
+        .timeline-item:after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 15px;
+            width: 2px;
+            height: calc(100% + 5px);
+            background-color: #1976d2;
+        }
+        .timeline-item:last-child:after {
+            display: none;
+        }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .contact-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .important-note {
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Grievance Response</h1>
+        <p>Date: {{ response_date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="response-section">
+            <h2>Response Details</h2>
+            <div class="info-card">
+                <h3>Grievance Information</h3>
+                <ul>
+                    <li><strong>Reference Number:</strong> {{ grievance.reference_number }}</li>
+                    <li><strong>Submission Date:</strong> {{ grievance.submission_date|date:"F d, Y" }}</li>
+                    <li><strong>Category:</strong> {{ grievance.category }}</li>
+                    <li><strong>Status:</strong> {{ grievance.status }}</li>
+                </ul>
+                
+                <div class="important-note">
+                    <h4>Original Grievance Summary</h4>
+                    <p>{{ grievance.summary }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="response-section">
+            <h2>Investigation Findings</h2>
+            <div class="info-card">
+                <h3>Investigation Process</h3>
+                <ul class="timeline">
+                    {% for step in investigation_steps %}
+                    <li class="timeline-item">
+                        <strong>{{ step.date|date:"F d, Y" }}</strong>
+                        <br>
+                        {{ step.description }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Key Findings</h3>
+                <ul>
+                    {% for finding in key_findings %}
+                    <li>
+                        <strong>{{ finding.title }}:</strong>
+                        <br>
+                        {{ finding.description }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="action-section">
+            <h2>Resolution</h2>
+            <div class="info-card">
+                <h3>Decision</h3>
+                <p>{{ resolution.decision }}</p>
+                
+                <h3>Rationale</h3>
+                <p>{{ resolution.rationale }}</p>
+                
+                <div class="important-note">
+                    <h4>Actions to be Taken</h4>
+                    <ul>
+                        {% for action in resolution_actions %}
+                        <li>
+                            <strong>{{ action.title }}</strong>
+                            <br>
+                            {{ action.description }}
+                            <br>
+                            <small>Timeline: {{ action.timeline }}</small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="support-section">
+            <h2>Support & Resources</h2>
+            <div class="info-card">
+                <h3>Available Support</h3>
+                <ul>
+                    {% for support in available_support %}
+                    <li>
+                        <strong>{{ support.name }}:</strong>
+                        <br>
+                        {{ support.description }}
+                        <br>
+                        <a href="{{ support.link }}">Access Support</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="contact-grid">
+                    <div class="contact-item">
+                        <h3>HR Representative</h3>
+                        <p>{{ hr_rep.name }}</p>
+                        <p>Email: {{ hr_rep.email }}</p>
+                        <p>Phone: {{ hr_rep.phone }}</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Employee Relations</h3>
+                        <p>{{ er_rep.name }}</p>
+                        <p>Email: {{ er_rep.email }}</p>
+                        <p>Phone: {{ er_rep.phone }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="response-section">
+            <h2>Next Steps</h2>
+            <div class="info-card">
+                <h3>Available Options</h3>
+                <ul>
+                    <li>Accept the resolution</li>
+                    <li>Request clarification</li>
+                    <li>Appeal the decision</li>
+                </ul>
+                
+                <div class="important-note">
+                    <h4>Important Deadlines</h4>
+                    <ul>
+                        {% for deadline in important_deadlines %}
+                        <li>
+                            <strong>{{ deadline.action }}:</strong>
+                            Due by {{ deadline.date|date:"F d, Y" }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <h3>Required Actions</h3>
+                <ol>
+                    <li>Review this response thoroughly</li>
+                    <li>Acknowledge receipt of response</li>
+                    <li>Choose your next step</li>
+                    <li>Submit any additional documentation if needed</li>
+                </ol>
+                
+                <a href="{{ response_form_link }}" class="button">Submit Your Response</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>This is an official communication from {{ company_name }}. Please treat this matter with utmost confidentiality.</p>
+        <p>If you need any clarification or have questions, please contact the HR representative listed above.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

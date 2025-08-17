@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #1976d2;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .pip-details {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .performance-areas {
+            background-color: #ffebee;
+            border-left: 6px solid #d32f2f;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .improvement-goals {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1976d2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+        .important-note {
+            background-color: #fff3e0;
+            border-left: 6px solid #f57c00;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .timeline {
+            background-color: #f3e5f5;
+            border-left: 6px solid #9c27b0;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .support {
+            background-color: #e0f2f1;
+            border-left: 6px solid #009688;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .metrics {
+            background-color: #fce4ec;
+            border-left: 6px solid #c2185b;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            padding: 3px;
+            margin: 5px 0;
+        }
+        .progress-bar-fill {
+            background-color: #1976d2;
+            height: 20px;
+            border-radius: 3px;
+            transition: width 500ms ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Performance Improvement Plan</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>This Performance Improvement Plan (PIP) has been developed to help you achieve the expected performance standards in your role. We are committed to supporting your success and professional growth.</p>
+        
+        <div class="pip-details">
+            <h2>PIP Information</h2>
+            <table>
+                <tr>
+                    <th>Employee Name</th>
+                    <td>{{ employee.get_full_name }}</td>
+                </tr>
+                <tr>
+                    <th>Employee ID</th>
+                    <td>{{ employee.employee_id }}</td>
+                </tr>
+                <tr>
+                    <th>Position</th>
+                    <td>{{ employee.position.title }}</td>
+                </tr>
+                <tr>
+                    <th>Department</th>
+                    <td>{{ employee.department.name }}</td>
+                </tr>
+                <tr>
+                    <th>Supervisor</th>
+                    <td>{{ supervisor.name }}</td>
+                </tr>
+                <tr>
+                    <th>PIP Start Date</th>
+                    <td>{{ pip.start_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>PIP End Date</th>
+                    <td>{{ pip.end_date|date:"F d, Y" }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="performance-areas">
+            <h2>Areas for Improvement</h2>
+            {% for area in improvement_areas %}
+            <div class="area">
+                <h3>{{ area.category }}</h3>
+                <p><strong>Current Performance:</strong> {{ area.current_performance }}</p>
+                <p><strong>Expected Standard:</strong> {{ area.expected_standard }}</p>
+                <p><strong>Impact:</strong> {{ area.impact }}</p>
+                <p><strong>Specific Examples:</strong></p>
+                <ul>
+                    {% for example in area.examples %}
+                    <li>{{ example }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="improvement-goals">
+            <h2>Performance Goals and Objectives</h2>
+            {% for goal in improvement_goals %}
+            <div class="goal">
+                <h3>{{ goal.title }}</h3>
+                <p><strong>Description:</strong> {{ goal.description }}</p>
+                <p><strong>Success Criteria:</strong></p>
+                <ul>
+                    {% for criterion in goal.success_criteria %}
+                    <li>{{ criterion }}</li>
+                    {% endfor %}
+                </ul>
+                <p><strong>Timeline:</strong> {{ goal.timeline }}</p>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" style="width: {{ goal.progress }}%"></div>
+                </div>
+                <p><em>Current Progress: {{ goal.progress }}%</em></p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="metrics">
+            <h2>Performance Metrics</h2>
+            {% for metric in performance_metrics %}
+            <div class="metric">
+                <h3>{{ metric.name }}</h3>
+                <p><strong>Current Level:</strong> {{ metric.current_level }}</p>
+                <p><strong>Target Level:</strong> {{ metric.target_level }}</p>
+                <p><strong>Measurement Method:</strong> {{ metric.measurement_method }}</p>
+                <p><strong>Frequency of Measurement:</strong> {{ metric.frequency }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="timeline">
+            <h2>Review Schedule</h2>
+            <ul>
+                {% for review in review_schedule %}
+                <li>
+                    <strong>{{ review.date|date:"F d, Y" }}</strong>: {{ review.type }}
+                    <p>{{ review.description }}</p>
+                    {% if review.preparation %}
+                    <p><em>Preparation Required:</em></p>
+                    <ul>
+                        {% for prep in review.preparation %}
+                        <li>{{ prep }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="support">
+            <h2>Support and Resources</h2>
+            <ul>
+                {% for resource in support_resources %}
+                <li>
+                    <strong>{{ resource.type }}</strong>
+                    <p>{{ resource.description }}</p>
+                    {% if resource.contact %}
+                    <p>Contact: {{ resource.contact }}</p>
+                    {% endif %}
+                    {% if resource.link %}
+                    <p>Access: <a href="{{ resource.link }}">{{ resource.link_text }}</a></p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="important-note">
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>Regular progress reviews will be conducted</li>
+                <li>All meetings and progress will be documented</li>
+                <li>You have the right to provide written responses to evaluations</li>
+                <li>Additional support can be requested at any time</li>
+                <li>Failure to meet improvement goals may result in further action</li>
+            </ul>
+        </div>
+        
+        <p>Required Actions:</p>
+        <ul>
+            <li>Review and acknowledge PIP by {{ acknowledgment_deadline|date:"F d, Y" }}</li>
+            <li>Schedule initial meeting with supervisor by {{ initial_meeting_deadline|date:"F d, Y" }}</li>
+            <li>Complete self-assessment form</li>
+            <li>Review available training resources</li>
+            <li>Set up regular check-ins with mentor/supervisor</li>
+        </ul>
+        
+        <a href="{{ hr_portal_url }}" class="button">Access HR Portal</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you have questions about this Performance Improvement Plan or need assistance, please contact your supervisor or HR representative.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

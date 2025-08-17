@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #009688;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .employee-details {
+            background-color: #e0f2f1;
+            border-left: 6px solid #009688;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .manager-actions {
+            background-color: #f1f8e9;
+            border-left: 6px solid #8bc34a;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #009688;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .schedule-box {
+            background-color: #fff3e0;
+            border-left: 6px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 30%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>New Team Member Added</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.department.manager.get_full_name }},</p>
+        
+        <p>A new employee has been added to your department ({{ employee.department.name }}).</p>
+        
+        <div class="employee-details">
+            <h2>Employee Information</h2>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <td>{{ employee.get_full_name }}</td>
+                </tr>
+                <tr>
+                    <th>Position</th>
+                    <td>{{ employee.position|default:"Not set" }}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{ employee.email }}</td>
+                </tr>
+                <tr>
+                    <th>Phone</th>
+                    <td>{{ employee.phone|default:"Not provided" }}</td>
+                </tr>
+                <tr>
+                    <th>Start Date</th>
+                    <td>{{ employee.start_date|date:"F d, Y" }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="manager-actions">
+            <h2>Recommended Actions</h2>
+            <ul>
+                <li>Schedule a welcome meeting with the new team member</li>
+                <li>Prepare necessary workspace and equipment</li>
+                <li>Assign an onboarding buddy or mentor</li>
+                <li>Review department-specific policies with the new employee</li>
+                <li>Set up initial goals and expectations</li>
+                <li>Plan team introduction and integration activities</li>
+            </ul>
+        </div>
+        
+        <div class="schedule-box">
+            <h2>First Week Schedule</h2>
+            <p>Consider including the following in the employee's first week:</p>
+            <ul>
+                <li>Department orientation session</li>
+                <li>Team introduction meeting</li>
+                <li>One-on-one welcome meeting</li>
+                <li>Project briefings and assignments</li>
+                <li>Training sessions for department-specific tools</li>
+            </ul>
+        </div>
+        
+        <p>Please ensure a smooth onboarding experience for your new team member.</p>
+        
+        <a href="{{ employee_detail_url }}" class="button">View Employee Profile</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you have any questions, please contact the HR department.</p>
+        <p>&copy; {{ current_year }} HR Management System. All rights reserved.</p>
+    </div>
+</body>
+</html>

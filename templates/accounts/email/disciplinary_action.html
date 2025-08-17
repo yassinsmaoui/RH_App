@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #d32f2f;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .incident-details {
+            background-color: #ffebee;
+            border-left: 6px solid #d32f2f;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .action-details {
+            background-color: #fce4ec;
+            border-left: 6px solid #c2185b;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .improvement-plan {
+            background-color: #f3e5f5;
+            border-left: 6px solid #7b1fa2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #d32f2f;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+        .important-note {
+            background-color: #fff3e0;
+            border-left: 6px solid #f57c00;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .timeline {
+            background-color: #e8eaf6;
+            border-left: 6px solid #3f51b5;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .consequences {
+            background-color: #ffcdd2;
+            border-left: 6px solid #b71c1c;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .support-resources {
+            background-color: #e0f2f1;
+            border-left: 6px solid #009688;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Disciplinary Action Notice</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>This letter serves as formal notification of disciplinary action being taken in response to conduct that does not align with {{ company_name }}'s policies and standards.</p>
+        
+        <div class="incident-details">
+            <h2>Incident Information</h2>
+            <table>
+                <tr>
+                    <th>Employee Name</th>
+                    <td>{{ employee.get_full_name }}</td>
+                </tr>
+                <tr>
+                    <th>Employee ID</th>
+                    <td>{{ employee.employee_id }}</td>
+                </tr>
+                <tr>
+                    <th>Department</th>
+                    <td>{{ employee.department.name }}</td>
+                </tr>
+                <tr>
+                    <th>Incident Date(s)</th>
+                    <td>{{ incident.date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Policy Violation</th>
+                    <td>{{ incident.policy_violation }}</td>
+                </tr>
+            </table>
+            
+            <h3>Description of Incident</h3>
+            <p>{{ incident.description }}</p>
+            
+            {% if incident.previous_warnings %}
+            <h3>Previous Warnings</h3>
+            <ul>
+                {% for warning in incident.previous_warnings %}
+                <li>{{ warning.date|date:"F d, Y" }}: {{ warning.description }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        
+        <div class="action-details">
+            <h2>Disciplinary Action</h2>
+            <table>
+                <tr>
+                    <th>Action Type</th>
+                    <td>{{ action.type }}</td>
+                </tr>
+                <tr>
+                    <th>Effective Date</th>
+                    <td>{{ action.effective_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Duration</th>
+                    <td>{{ action.duration }}</td>
+                </tr>
+            </table>
+            
+            <div class="consequences">
+                <h3>Immediate Consequences</h3>
+                <ul>
+                    {% for consequence in action.consequences %}
+                    <li>{{ consequence }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="improvement-plan">
+            <h2>Performance Improvement Plan</h2>
+            <h3>Required Actions</h3>
+            <ul>
+                {% for requirement in improvement_plan.requirements %}
+                <li>{{ requirement }}</li>
+                {% endfor %}
+            </ul>
+            
+            <h3>Success Criteria</h3>
+            <ul>
+                {% for criteria in improvement_plan.success_criteria %}
+                <li>{{ criteria }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="timeline">
+            <h2>Review Timeline</h2>
+            <ul>
+                {% for review in improvement_plan.review_timeline %}
+                <li>
+                    <strong>{{ review.date|date:"F d, Y" }}</strong>: {{ review.description }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="support-resources">
+            <h2>Support Resources</h2>
+            <ul>
+                <li>Direct Supervisor: {{ supervisor.name }} ({{ supervisor.email }})</li>
+                <li>HR Representative: {{ hr_rep.name }} ({{ hr_rep.email }})</li>
+                {% if employee_assistance_program %}
+                <li>Employee Assistance Program: {{ employee_assistance_program.contact }}</li>
+                {% endif %}
+                {% for resource in additional_resources %}
+                <li>{{ resource.name }}: {{ resource.description }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="important-note">
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>This disciplinary action will be documented in your personnel file</li>
+                <li>Failure to meet improvement requirements may result in further disciplinary action</li>
+                <li>You have the right to appeal this decision through the established grievance process</li>
+                <li>You must acknowledge receipt of this notice by signing the attached document</li>
+                <li>Support resources are available to help you succeed in meeting expectations</li>
+            </ul>
+        </div>
+        
+        <p>Required Actions:</p>
+        <ul>
+            <li>Review and sign acknowledgment form by {{ acknowledgment_deadline|date:"F d, Y" }}</li>
+            <li>Schedule meeting with supervisor by {{ supervisor_meeting_deadline|date:"F d, Y" }}</li>
+            <li>Complete any required training by specified deadlines</li>
+            <li>Maintain documentation of improvement efforts</li>
+        </ul>
+        
+        <a href="{{ hr_portal_url }}" class="button">Access HR Portal</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you have questions about this disciplinary action or need assistance, please contact your HR representative.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

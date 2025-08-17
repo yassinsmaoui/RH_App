@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #1a237e;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .certificate {
+            background-color: white;
+            border: 2px solid #1a237e;
+            padding: 40px;
+            margin: 20px 0;
+            text-align: center;
+            position: relative;
+        }
+        .certificate:before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px solid #1a237e;
+        }
+        .certificate h2 {
+            color: #1a237e;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .certificate .seal {
+            color: #1a237e;
+            font-size: 60px;
+            margin: 20px 0;
+        }
+        .achievement-details {
+            background-color: #e8eaf6;
+            border-left: 6px solid #1a237e;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .performance {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .next-steps {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1a237e;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+        .skills-gained {
+            background-color: #f3e5f5;
+            border-left: 6px solid #9c27b0;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #e8eaf6;
+            color: #1a237e;
+            border-radius: 15px;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .progress-bar {
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            padding: 3px;
+            margin: 5px 0;
+        }
+        .progress-bar-fill {
+            background-color: #1a237e;
+            height: 20px;
+            border-radius: 3px;
+            transition: width 500ms ease-in-out;
+        }
+        .signature {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 24px;
+            color: #1a237e;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Training Completion Certificate</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>Congratulations on successfully completing the {{ training.title }}! We are pleased to present you with your official certificate of completion.</p>
+        
+        <div class="certificate">
+            <div class="seal">🏆</div>
+            <h2>Certificate of Achievement</h2>
+            <p>This is to certify that</p>
+            <h3>{{ employee.get_full_name }}</h3>
+            <p>has successfully completed</p>
+            <h3>{{ training.title }}</h3>
+            <p>with a score of {{ training.score }}%</p>
+            <p>Completed on {{ training.completion_date|date:"F d, Y" }}</p>
+            
+            <div class="signature">
+                {{ trainer.name }}<br>
+                <small>{{ trainer.title }}</small>
+            </div>
+            
+            <p><small>Certificate ID: {{ certificate.id }}</small></p>
+        </div>
+        
+        <div class="achievement-details">
+            <h2>Achievement Details</h2>
+            <table>
+                <tr>
+                    <th>Training Program</th>
+                    <td>{{ training.title }}</td>
+                </tr>
+                <tr>
+                    <th>Duration</th>
+                    <td>{{ training.duration }}</td>
+                </tr>
+                <tr>
+                    <th>Completion Date</th>
+                    <td>{{ training.completion_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Certification Valid Until</th>
+                    <td>{{ certificate.valid_until|date:"F d, Y" }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="performance">
+            <h2>Performance Summary</h2>
+            {% for module in training.modules %}
+            <div class="module-performance">
+                <h3>{{ module.title }}</h3>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" style="width: {{ module.score }}%"></div>
+                </div>
+                <p>Score: {{ module.score }}% ({{ module.grade }})</p>
+                {% if module.feedback %}
+                <p><em>Feedback: {{ module.feedback }}</em></p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="skills-gained">
+            <h2>Skills & Competencies Gained</h2>
+            <div class="skills">
+                {% for skill in training.skills_gained %}
+                <span class="badge">{{ skill }}</span>
+                {% endfor %}
+            </div>
+            {% if training.competency_level %}
+            <p><strong>Competency Level Achieved:</strong> {{ training.competency_level }}</p>
+            {% endif %}
+        </div>
+        
+        <div class="next-steps">
+            <h2>Next Steps</h2>
+            <ul>
+                {% for step in next_steps %}
+                <li>
+                    <strong>{{ step.title }}</strong>
+                    <p>{{ step.description }}</p>
+                    {% if step.deadline %}
+                    <p><em>Complete by: {{ step.deadline|date:"F d, Y" }}</em></p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <p>Available Actions:</p>
+        <ul>
+            <li>Download your certificate (PDF format)</li>
+            <li>Share your achievement on professional networks</li>
+            <li>Update your employee profile</li>
+            <li>Explore advanced training opportunities</li>
+            <li>Schedule a follow-up session with your trainer</li>
+        </ul>
+        
+        <a href="{{ certificate.download_url }}" class="button">Download Certificate</a>
+        
+        {% if social_sharing %}
+        <p><small>Share your achievement: 
+            {% for platform in social_sharing %}
+            <a href="{{ platform.share_url }}">{{ platform.name }}</a>{% if not forloop.last %} | {% endif %}
+            {% endfor %}
+        </small></p>
+        {% endif %}
+        
+        {% if next_training %}
+        <p><small>Recommended Next Training: <a href="{{ next_training.url }}">{{ next_training.title }}</a></small></p>
+        {% endif %}
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you have any questions about your certificate or training program, please contact the Training & Development team.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #0277bd;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .shift-details {
+            background-color: #e1f5fe;
+            border-left: 6px solid #0277bd;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .schedule-details {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .impact-details {
+            background-color: #fff3e0;
+            border-left: 6px solid #f57c00;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #0277bd;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .shift-item {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .type-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .type-permanent {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .type-temporary {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        .type-rotation {
+            background-color: #e1f5fe;
+            color: #0277bd;
+        }
+        .note {
+            background-color: #fafafa;
+            padding: 10px;
+            border-left: 3px solid #9e9e9e;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        .calendar {
+            margin: 20px 0;
+        }
+        .calendar-day {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .calendar-day.current {
+            border-color: #0277bd;
+            border-width: 2px;
+        }
+        .warning {
+            background-color: #fff3e0;
+            border-left: 3px solid #f57c00;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🕒 Shift Change Notification 🕒</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>This email is to inform you about changes to your work schedule:</p>
+        
+        <div class="shift-details">
+            <h2>Change Overview</h2>
+            <div class="shift-item">
+                <h3>
+                    Schedule Update #{{ shift_change.reference_id }}
+                    <span class="type-badge type-{{ shift_change.type|lower }}">
+                        {{ shift_change.type }} Change
+                    </span>
+                </h3>
+                <table>
+                    <tr>
+                        <th>Effective From</th>
+                        <td>{{ shift_change.effective_from|date:"F d, Y" }}</td>
+                    </tr>
+                    {% if shift_change.type == "TEMPORARY" %}
+                    <tr>
+                        <th>Until</th>
+                        <td>{{ shift_change.effective_until|date:"F d, Y" }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <th>Department</th>
+                        <td>{{ shift_change.department }}</td>
+                    </tr>
+                    <tr>
+                        <th>Supervisor</th>
+                        <td>{{ shift_change.supervisor }}</td>
+                    </tr>
+                </table>
+                
+                {% if shift_change.reason %}
+                <div class="note">
+                    <strong>Reason for Change:</strong><br>
+                    {{ shift_change.reason }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="schedule-details">
+            <h2>Schedule Changes</h2>
+            <div class="shift-item">
+                <h3>Current Schedule</h3>
+                <table>
+                    <tr>
+                        <th>Shift Name</th>
+                        <td>{{ shift_change.current_shift.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Working Hours</th>
+                        <td>{{ shift_change.current_shift.start_time|time:"g:i A" }} - {{ shift_change.current_shift.end_time|time:"g:i A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Days</th>
+                        <td>{{ shift_change.current_shift.working_days }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="shift-item">
+                <h3>New Schedule</h3>
+                <table>
+                    <tr>
+                        <th>Shift Name</th>
+                        <td>{{ shift_change.new_shift.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Working Hours</th>
+                        <td>{{ shift_change.new_shift.start_time|time:"g:i A" }} - {{ shift_change.new_shift.end_time|time:"g:i A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Days</th>
+                        <td>{{ shift_change.new_shift.working_days }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            {% if shift_change.rotation_pattern %}
+            <div class="shift-item">
+                <h3>Rotation Pattern</h3>
+                <p>{{ shift_change.rotation_pattern }}</p>
+                <div class="calendar">
+                    {% for day in shift_change.calendar %}
+                    <div class="calendar-day {% if day.is_current %}current{% endif %}">
+                        <strong>{{ day.date|date:"D, M d" }}</strong><br>
+                        {{ day.shift_name }}<br>
+                        {{ day.start_time|time:"g:i A" }} - {{ day.end_time|time:"g:i A" }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="impact-details">
+            <h2>Important Information</h2>
+            
+            {% if shift_change.break_schedule %}
+            <div class="shift-item">
+                <h3>Break Schedule</h3>
+                <ul>
+                    {% for break in shift_change.break_schedule %}
+                    <li>
+                        {{ break.type }}: {{ break.start_time|time:"g:i A" }} - {{ break.end_time|time:"g:i A" }}
+                        ({{ break.duration }} minutes)
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            {% if shift_change.overtime_impact %}
+            <div class="warning">
+                <strong>Overtime Impact:</strong><br>
+                {{ shift_change.overtime_impact }}
+            </div>
+            {% endif %}
+            
+            {% if shift_change.additional_notes %}
+            <div class="note">
+                <strong>Additional Notes:</strong><br>
+                {{ shift_change.additional_notes }}
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="shift-details">
+            <h2>Action Items</h2>
+            <ul>
+                <li>Review the new schedule carefully</li>
+                <li>Update your personal arrangements accordingly</li>
+                <li>Acknowledge receipt of this notification</li>
+                {% if shift_change.handover_required %}
+                <li>Complete handover documentation by {{ shift_change.handover_deadline|date:"F d, Y" }}</li>
+                {% endif %}
+                {% if shift_change.training_required %}
+                <li>Complete required training by {{ shift_change.training_deadline|date:"F d, Y" }}</li>
+                {% endif %}
+            </ul>
+        </div>
+        
+        <div class="shift-details">
+            <h2>Policy Reminders</h2>
+            <ul>
+                <li>Arrive at least {{ policy.arrival_buffer }} minutes before shift start</li>
+                <li>Follow proper handover procedures between shifts</li>
+                <li>Use biometric system for attendance tracking</li>
+                <li>Request schedule adjustments at least {{ policy.adjustment_notice_days }} days in advance</li>
+                <li>Follow break schedule as specified</li>
+            </ul>
+        </div>
+        
+        <p>Available Actions:</p>
+        <ul>
+            <li>View complete schedule calendar</li>
+            <li>Download shift details</li>
+            <li>Request schedule adjustment</li>
+            <li>View attendance policy</li>
+            <li>Contact supervisor</li>
+        </ul>
+        
+        <a href="{{ schedule_portal_url }}" class="button">Access Schedule Portal</a>
+        
+        {% if shift_change.acknowledgment_required %}
+        <div class="warning">
+            <strong>Action Required:</strong> Please acknowledge this schedule change by {{ shift_change.acknowledgment_deadline|date:"F d, Y g:i A" }}.
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>For questions about shift changes, contact your supervisor or HR Team.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

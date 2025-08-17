@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #ff5722, #ff9800);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .attendance-details {
+            background-color: #fbe9e7;
+            border-left: 6px solid #ff5722;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .summary-details {
+            background-color: #fff3e0;
+            border-left: 6px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .policy-details {
+            background-color: #e8eaf6;
+            border-left: 6px solid #3f51b5;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #ff5722, #ff9800);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        .status-ontime {
+            background-color: #e8f5e9;
+            color: #4caf50;
+        }
+        .status-late {
+            background-color: #fff3e0;
+            color: #ff9800;
+        }
+        .status-absent {
+            background-color: #ffebee;
+            color: #f44336;
+        }
+        .attendance-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .attendance-stat {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff5722;
+            margin: 10px 0;
+        }
+        .timeline {
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #ff5722;
+        }
+        .timeline-item:after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 15px;
+            width: 2px;
+            height: calc(100% + 5px);
+            background-color: #ff5722;
+        }
+        .timeline-item:last-child:after {
+            display: none;
+        }
+        .chart {
+            width: 100%;
+            height: 200px;
+            margin: 20px 0;
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⏰ Attendance Notification</h1>
+        <p>{{ notification.type }} - {{ notification.date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ recipient.get_full_name }},</p>
+        
+        <div class="attendance-details">
+            <h2>Attendance Details</h2>
+            <div class="info-card">
+                <p>
+                    <strong>Status:</strong>
+                    <span class="status-badge status-{{ attendance.status|lower }}">{{ attendance.status }}</span>
+                </p>
+                
+                <h3>Employee Information</h3>
+                <ul>
+                    <li><strong>Name:</strong> {{ employee.get_full_name }}</li>
+                    <li><strong>Employee ID:</strong> {{ employee.id }}</li>
+                    <li><strong>Department:</strong> {{ employee.department }}</li>
+                    <li><strong>Position:</strong> {{ employee.position }}</li>
+                </ul>
+                
+                <h3>Time Details</h3>
+                <ul>
+                    <li><strong>Date:</strong> {{ attendance.date|date:"F d, Y" }}</li>
+                    <li><strong>Check-in Time:</strong> {{ attendance.check_in_time|time:"H:i" }}</li>
+                    {% if attendance.check_out_time %}
+                    <li><strong>Check-out Time:</strong> {{ attendance.check_out_time|time:"H:i" }}</li>
+                    {% endif %}
+                    <li><strong>Working Hours:</strong> {{ attendance.working_hours }}</li>
+                    {% if attendance.late_minutes %}
+                    <li><strong>Late by:</strong> {{ attendance.late_minutes }} minutes</li>
+                    {% endif %}
+                </ul>
+                
+                {% if attendance.reason %}
+                <h3>Reason/Notes</h3>
+                <p>{{ attendance.reason }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="summary-details">
+            <h2>Monthly Summary</h2>
+            <div class="attendance-grid">
+                <div class="attendance-stat">
+                    <h3>Present Days</h3>
+                    <div class="stat-number">{{ monthly_summary.present_days }}</div>
+                    <p>Out of {{ monthly_summary.total_working_days }}</p>
+                </div>
+                <div class="attendance-stat">
+                    <h3>Late Days</h3>
+                    <div class="stat-number">{{ monthly_summary.late_days }}</div>
+                    <p>This Month</p>
+                </div>
+                <div class="attendance-stat">
+                    <h3>Average Hours</h3>
+                    <div class="stat-number">{{ monthly_summary.avg_hours }}</div>
+                    <p>Per Day</p>
+                </div>
+                <div class="attendance-stat">
+                    <h3>Overtime Hours</h3>
+                    <div class="stat-number">{{ monthly_summary.overtime_hours }}</div>
+                    <p>This Month</p>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <h3>Attendance Pattern</h3>
+                <div class="chart">
+                    <!-- Placeholder for attendance chart -->
+                    {{ attendance_chart|safe }}
+                </div>
+                
+                <h3>Recent Activity</h3>
+                <ul class="timeline">
+                    {% for activity in recent_activities %}
+                    <li class="timeline-item">
+                        <strong>{{ activity.date|date:"F d" }}</strong><br>
+                        {{ activity.description }}<br>
+                        <small>{{ activity.status }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        {% if notification.type == 'WARNING' or notification.type == 'VIOLATION' %}
+        <div class="policy-details">
+            <h2>Policy Information</h2>
+            <div class="info-card">
+                <h3>Attendance Policy</h3>
+                <ul>
+                    <li>Working hours: {{ policy.working_hours }}</li>
+                    <li>Grace period: {{ policy.grace_period }} minutes</li>
+                    <li>Late threshold: {{ policy.late_threshold }} minutes</li>
+                    <li>Maximum allowed late days: {{ policy.max_late_days }} per month</li>
+                </ul>
+                
+                <h3>Violation Details</h3>
+                <ul>
+                    <li><strong>Violation Type:</strong> {{ violation.type }}</li>
+                    <li><strong>Occurrence:</strong> {{ violation.occurrence }}</li>
+                    <li><strong>Consequence:</strong> {{ violation.consequence }}</li>
+                </ul>
+                
+                <h3>Required Actions</h3>
+                <ol>
+                    <li>Acknowledge this notification</li>
+                    <li>Schedule meeting with supervisor</li>
+                    <li>Submit improvement plan</li>
+                    <li>Review attendance policy</li>
+                </ol>
+                
+                <a href="{{ acknowledgment_link }}" class="button">Acknowledge Notification</a>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="attendance-details">
+            <h2>Support Information</h2>
+            <div class="info-card">
+                <h3>HR Support</h3>
+                <p>
+                    <strong>Contact:</strong> {{ hr_support.name }}<br>
+                    Email: {{ hr_support.email }}<br>
+                    Phone: {{ hr_support.phone }}
+                </p>
+                
+                <h3>Helpful Links</h3>
+                <ul>
+                    <li><a href="{{ attendance_portal_link }}">Attendance Portal</a></li>
+                    <li><a href="{{ policy_link }}">Attendance Policy</a></li>
+                    <li><a href="{{ support_link }}">Support Center</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated notification. Please do not reply to this email.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .celebration-details {
+            background-color: #fff3e0;
+            border-left: 6px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .wishes-details {
+            background-color: #e8f5e9;
+            border-left: 6px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .gift-details {
+            background-color: #e3f2fd;
+            border-left: 6px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .celebration-item {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .wish-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .wish-card:before {
+            content: "🎈";
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 40px;
+            opacity: 0.1;
+            transform: rotate(45deg);
+        }
+        .quote {
+            font-style: italic;
+            padding: 15px;
+            background-color: #fff;
+            border-left: 4px solid #ff6b6b;
+            margin: 10px 0;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ff6b6b;
+            animation: confetti 5s ease-in-out infinite;
+        }
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        .birthday-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .emoji-decoration {
+            font-size: 24px;
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎂 Happy Birthday! 🎉</h1>
+        <p>Celebrating {{ employee.get_full_name }}'s Special Day</p>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>On behalf of the entire {{ company_name }} family, we wish you a very happy birthday! May your day be filled with joy, laughter, and unforgettable moments.</p>
+        
+        <div class="celebration-details">
+            <h2>Your Journey with Us</h2>
+            <div class="birthday-stats">
+                <div class="stat-card">
+                    <div class="stat-number">{{ employee.years_with_company }}</div>
+                    <div>Years with Us</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ employee.projects_completed }}</div>
+                    <div>Projects Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ employee.achievements_count }}</div>
+                    <div>Achievements</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ employee.team_contributions }}</div>
+                    <div>Team Contributions</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="wishes-details">
+            <h2>Birthday Wishes from Your Team</h2>
+            {% for wish in birthday_wishes %}
+            <div class="wish-card">
+                <p>{{ wish.message }}</p>
+                <p><strong>- {{ wish.from_name }}</strong><br>
+                <small>{{ wish.position }}</small></p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if birthday_celebration %}
+        <div class="celebration-details">
+            <h2>Birthday Celebration</h2>
+            <div class="celebration-item">
+                <h3>Join Us for the Celebration!</h3>
+                <p><strong>Date:</strong> {{ birthday_celebration.date|date:"F d, Y" }}</p>
+                <p><strong>Time:</strong> {{ birthday_celebration.time }}</p>
+                <p><strong>Location:</strong> {{ birthday_celebration.location }}</p>
+                {% if birthday_celebration.virtual_link %}
+                <p><strong>Virtual Link:</strong> <a href="{{ birthday_celebration.virtual_link }}">Join Here</a></p>
+                {% endif %}
+                <p><em>{{ birthday_celebration.special_note }}</em></p>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if birthday_perks %}
+        <div class="gift-details">
+            <h2>Your Birthday Perks</h2>
+            <div class="celebration-item">
+                <ul>
+                    {% for perk in birthday_perks %}
+                    <li>
+                        <strong>{{ perk.title }}</strong><br>
+                        {{ perk.description }}
+                        {% if perk.validity %}
+                        <br><small>Valid until: {{ perk.validity|date:"F d, Y" }}</small>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="quote">
+            <span class="emoji-decoration">✨</span>
+            {{ birthday_quote }}
+            <span class="emoji-decoration">✨</span>
+        </div>
+        
+        {% if social_sharing_enabled %}
+        <div class="celebration-details">
+            <h2>Share the Joy</h2>
+            <p>Let your network join in the celebration:</p>
+            <div class="celebration-item">
+                <a href="{{ social_sharing.linkedin }}" class="button" style="background-color: #0077b5;">Share on LinkedIn</a>
+                <a href="{{ social_sharing.twitter }}" class="button" style="background-color: #1da1f2;">Share on Twitter</a>
+            </div>
+        </div>
+        {% endif %}
+        
+        <p>We hope this birthday brings you countless reasons to smile and celebrate. Thank you for being an amazing part of our team!</p>
+        
+        {% if birthday_video %}
+        <div class="celebration-details">
+            <h2>Special Birthday Message</h2>
+            <div class="celebration-item">
+                <p>Your team has prepared a special video message for you!</p>
+                <a href="{{ birthday_video.url }}" class="button">Watch Video</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="footer">
+        <p>This celebration is brought to you with ❤️ by the HR Team at {{ company_name }}.</p>
+        <p>Wishing you a fantastic birthday and an amazing year ahead! 🎊</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

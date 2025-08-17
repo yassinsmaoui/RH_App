@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #283593, #3949ab);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .access-section {
+            background-color: #e8eaf6;
+            border-left: 6px solid #3949ab;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .security-section {
+            background-color: #ede7f6;
+            border-left: 6px solid #673ab7;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .support-section {
+            background-color: #f3e5f5;
+            border-left: 6px solid #9c27b0;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #283593, #3949ab);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-tag {
+            display: inline-block;
+            background-color: #c5cae9;
+            color: #283593;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .access-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .access-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .important-note {
+            background-color: #e8eaf6;
+            border-left: 4px solid #3949ab;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .security-checklist {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .checklist-item {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        .checklist-item::before {
+            content: '🔒';
+            position: absolute;
+            left: 0;
+        }
+        .warning-box {
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Access Control Update 🔐</h1>
+        <p>Date: {{ notification_date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="access-section">
+            <h2>Access Details</h2>
+            <div class="info-card">
+                <h3>User Information</h3>
+                <div class="important-note">
+                    <ul>
+                        <li><strong>Employee Name:</strong> {{ employee_name }}</li>
+                        <li><strong>Employee ID:</strong> {{ employee_id }}</li>
+                        <li><strong>Department:</strong> {{ department }}</li>
+                        <li><strong>Position:</strong> {{ position }}</li>
+                        <li><strong>Effective Date:</strong> {{ effective_date|date:"F d, Y" }}</li>
+                        <span class="status-tag">{{ access_status }}</span>
+                    </ul>
+                </div>
+                
+                <h3>Access Changes</h3>
+                <div class="access-grid">
+                    {% for access in access_changes %}
+                    <div class="access-card">
+                        <h4>{{ access.system_name }}</h4>
+                        <ul>
+                            <li><strong>Access Level:</strong> {{ access.level }}</li>
+                            <li><strong>Type:</strong> {{ access.type }}</li>
+                            <li><strong>Duration:</strong> {{ access.duration }}</li>
+                            {% if access.restrictions %}
+                            <li><strong>Restrictions:</strong>
+                                <ul>
+                                    {% for restriction in access.restrictions %}
+                                    <li>{{ restriction }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            {% endif %}
+                            <span class="status-tag">{{ access.status }}</span>
+                        </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="security-section">
+            <h2>Security Requirements</h2>
+            <div class="info-card">
+                <h3>Security Policies</h3>
+                <div class="warning-box">
+                    <h4>Important Security Notice</h4>
+                    <p>{{ security_notice }}</p>
+                </div>
+                
+                <h3>Compliance Requirements</h3>
+                <div class="security-checklist">
+                    {% for requirement in compliance_requirements %}
+                    <div class="checklist-item">
+                        <strong>{{ requirement.title }}</strong>
+                        <br>
+                        {{ requirement.description }}
+                        {% if requirement.deadline %}
+                        <br>
+                        <strong>Complete by:</strong> {{ requirement.deadline|date:"F d, Y" }}
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <h3>Access Guidelines</h3>
+                <ul>
+                    {% for guideline in access_guidelines %}
+                    <li>
+                        <strong>{{ guideline.title }}</strong>
+                        <br>
+                        {{ guideline.description }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="support-section">
+            <h2>Support & Resources</h2>
+            <div class="info-card">
+                <h3>Getting Started</h3>
+                <div class="important-note">
+                    <h4>Next Steps</h4>
+                    <ol>
+                        {% for step in next_steps %}
+                        <li>
+                            <strong>{{ step.title }}</strong>
+                            <br>
+                            {{ step.description }}
+                            {% if step.deadline %}
+                            <br>
+                            <strong>Complete by:</strong> {{ step.deadline|date:"F d, Y" }}
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                
+                <h3>Support Contacts</h3>
+                <ul>
+                    {% for contact in support_contacts %}
+                    <li>
+                        <strong>{{ contact.title }}</strong>
+                        <br>
+                        {{ contact.name }}
+                        <br>
+                        {{ contact.contact_info }}
+                        <br>
+                        <strong>Hours:</strong> {{ contact.hours }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Helpful Resources</h3>
+                <ul>
+                    {% for resource in helpful_resources %}
+                    <li>
+                        <strong>{{ resource.title }}</strong>
+                        <br>
+                        {{ resource.description }}
+                        <br>
+                        <a href="{{ resource.link }}">Access Resource</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <a href="{{ access_portal_link }}" class="button">Access Security Portal</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>{{ security_department_name }}</p>
+        <p>Contact: {{ security_email }}</p>
+        <p>Support: {{ support_contact }}</p>
+        <p>Confidentiality Notice: This email contains sensitive access control information intended only for the named recipient.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

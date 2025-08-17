@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #8e24aa;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .celebration-details {
+            background-color: #f3e5f5;
+            border-left: 6px solid #8e24aa;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .milestone-details {
+            background-color: #e8f5e9;
+            border-left: 6px solid #2e7d32;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .achievement-details {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #8e24aa;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .celebration-item {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .quote {
+            font-style: italic;
+            padding: 15px;
+            background-color: #fff;
+            border-left: 4px solid #8e24aa;
+            margin: 10px 0;
+        }
+        .achievement-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .achievement-icon {
+            font-size: 24px;
+            color: #8e24aa;
+        }
+        .timeline {
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #8e24aa;
+        }
+        .timeline-item:after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 15px;
+            width: 2px;
+            height: calc(100% + 5px);
+            background-color: #8e24aa;
+        }
+        .timeline-item:last-child:after {
+            display: none;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #8e24aa;
+        }
+        .testimonial {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            position: relative;
+        }
+        .testimonial:before {
+            content: "\201C";
+            font-size: 60px;
+            color: #8e24aa;
+            position: absolute;
+            left: 10px;
+            top: -10px;
+            opacity: 0.2;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎉 Happy Work Anniversary! 🎉</h1>
+        <p>Celebrating {{ employee.years_of_service }} Years of Excellence</p>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>Today marks an incredible milestone in your journey with {{ company_name }}! We're thrilled to celebrate {{ employee.years_of_service }} years of your dedication, hard work, and invaluable contributions to our organization.</p>
+        
+        <div class="celebration-details">
+            <h2>Your Journey with Us</h2>
+            <div class="celebration-item">
+                <ul class="timeline">
+                    <li class="timeline-item">
+                        <strong>Joined {{ company_name }}</strong><br>
+                        {{ employee.join_date|date:"F d, Y" }}<br>
+                        <small>Started as {{ employee.initial_position }} in {{ employee.initial_department }}</small>
+                    </li>
+                    {% for milestone in employee.career_milestones %}
+                    <li class="timeline-item">
+                        <strong>{{ milestone.title }}</strong><br>
+                        {{ milestone.date|date:"F d, Y" }}<br>
+                        <small>{{ milestone.description }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="milestone-details">
+            <h2>Your Impact by Numbers</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ employee.projects_completed }}</div>
+                    <div>Projects Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ employee.team_members_mentored }}</div>
+                    <div>Team Members Mentored</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ employee.certifications_earned }}</div>
+                    <div>Certifications Earned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ employee.awards_received }}</div>
+                    <div>Awards Received</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="achievement-details">
+            <h2>Key Achievements</h2>
+            {% for achievement in employee.key_achievements %}
+            <div class="achievement-card">
+                <div class="achievement-icon">🏆</div>
+                <div>
+                    <h3>{{ achievement.title }}</h3>
+                    <p>{{ achievement.description }}</p>
+                    {% if achievement.impact %}
+                    <small><strong>Impact:</strong> {{ achievement.impact }}</small>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="celebration-details">
+            <h2>Messages from Your Team</h2>
+            {% for message in celebration_messages %}
+            <div class="testimonial">
+                <p>{{ message.content }}</p>
+                <p><strong>- {{ message.author }}</strong><br>
+                <small>{{ message.position }}</small></p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="milestone-details">
+            <h2>Your Anniversary Rewards</h2>
+            <div class="celebration-item">
+                <ul>
+                    {% for reward in anniversary_rewards %}
+                    <li>
+                        <strong>{{ reward.title }}</strong><br>
+                        {{ reward.description }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                {% if anniversary_event %}
+                <div class="note">
+                    <strong>Anniversary Celebration Event</strong><br>
+                    Date: {{ anniversary_event.date|date:"F d, Y" }}<br>
+                    Time: {{ anniversary_event.time }}<br>
+                    Location: {{ anniversary_event.location }}<br>
+                    {% if anniversary_event.virtual_link %}
+                    Virtual Link: <a href="{{ anniversary_event.virtual_link }}">Join Here</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="quote">
+            "{{ inspirational_quote }}"
+        </div>
+        
+        <p>Thank you for your continued dedication and commitment to excellence. Here's to many more years of success and growth together!</p>
+        
+        <a href="{{ career_portal_url }}" class="button">View Your Career Journey</a>
+        
+        {% if social_sharing_enabled %}
+        <div class="celebration-details">
+            <h2>Share Your Milestone</h2>
+            <p>Celebrate this milestone with your network:</p>
+            <div class="celebration-item">
+                <a href="{{ social_sharing.linkedin }}" class="button" style="background-color: #0077b5;">Share on LinkedIn</a>
+                <a href="{{ social_sharing.twitter }}" class="button" style="background-color: #1da1f2;">Share on Twitter</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="footer">
+        <p>This celebration is brought to you by the HR Team at {{ company_name }}.</p>
+        <p>Here's to many more years of success and growth together! 🎊</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

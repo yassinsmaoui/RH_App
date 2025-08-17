@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #ff9800;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .probation-details {
+            background-color: #fff3e0;
+            border-left: 6px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .performance-issues {
+            background-color: #ffebee;
+            border-left: 6px solid #d32f2f;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .improvement-plan {
+            background-color: #e8f5e9;
+            border-left: 6px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #ff9800;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+        .important-note {
+            background-color: #fce4ec;
+            border-left: 6px solid #e91e63;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .timeline {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .support-resources {
+            background-color: #e0f2f1;
+            border-left: 6px solid #009688;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .metrics {
+            background-color: #f3e5f5;
+            border-left: 6px solid #9c27b0;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Probation Notice</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>This letter serves as formal notification that you are being placed on a performance improvement probation period. This action is being taken to address specific performance concerns and provide you with an opportunity to meet the expected standards of your position.</p>
+        
+        <div class="probation-details">
+            <h2>Probation Information</h2>
+            <table>
+                <tr>
+                    <th>Employee Name</th>
+                    <td>{{ employee.get_full_name }}</td>
+                </tr>
+                <tr>
+                    <th>Employee ID</th>
+                    <td>{{ employee.employee_id }}</td>
+                </tr>
+                <tr>
+                    <th>Department</th>
+                    <td>{{ employee.department.name }}</td>
+                </tr>
+                <tr>
+                    <th>Position</th>
+                    <td>{{ employee.position.title }}</td>
+                </tr>
+                <tr>
+                    <th>Probation Start Date</th>
+                    <td>{{ probation.start_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Probation End Date</th>
+                    <td>{{ probation.end_date|date:"F d, Y" }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="performance-issues">
+            <h2>Performance Concerns</h2>
+            <ul>
+                {% for issue in performance_issues %}
+                <li>
+                    <strong>{{ issue.category }}</strong>
+                    <p>{{ issue.description }}</p>
+                    <p><em>Impact: {{ issue.impact }}</em></p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="improvement-plan">
+            <h2>Performance Improvement Plan</h2>
+            
+            <h3>Objectives</h3>
+            <ul>
+                {% for objective in improvement_plan.objectives %}
+                <li>
+                    <strong>{{ objective.title }}</strong>
+                    <p>{{ objective.description }}</p>
+                    <p><em>Success Criteria: {{ objective.success_criteria }}</em></p>
+                </li>
+                {% endfor %}
+            </ul>
+            
+            <div class="metrics">
+                <h3>Performance Metrics</h3>
+                <ul>
+                    {% for metric in improvement_plan.metrics %}
+                    <li>
+                        <strong>{{ metric.name }}</strong>
+                        <p>Current Level: {{ metric.current_level }}</p>
+                        <p>Expected Level: {{ metric.expected_level }}</p>
+                        <p>Measurement Method: {{ metric.measurement_method }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="timeline">
+            <h2>Review Schedule</h2>
+            <ul>
+                {% for review in review_schedule %}
+                <li>
+                    <strong>{{ review.date|date:"F d, Y" }}</strong>: {{ review.type }}
+                    <p>{{ review.description }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="support-resources">
+            <h2>Support Resources</h2>
+            <ul>
+                <li>Direct Supervisor: {{ supervisor.name }} ({{ supervisor.email }})</li>
+                <li>HR Representative: {{ hr_rep.name }} ({{ hr_rep.email }})</li>
+                {% if mentor %}
+                <li>Assigned Mentor: {{ mentor.name }} ({{ mentor.email }})</li>
+                {% endif %}
+                {% if employee_assistance_program %}
+                <li>Employee Assistance Program: {{ employee_assistance_program.contact }}</li>
+                {% endif %}
+                {% for resource in additional_resources %}
+                <li>{{ resource.name }}: {{ resource.description }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="important-note">
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>Regular progress reviews will be conducted throughout the probation period</li>
+                <li>Documentation of all meetings and progress will be maintained</li>
+                <li>Failure to meet improvement objectives may result in further action</li>
+                <li>You have the right to provide written responses to performance evaluations</li>
+                <li>Support resources are available to help you succeed</li>
+            </ul>
+        </div>
+        
+        <p>Required Actions:</p>
+        <ul>
+            <li>Review and sign probation acknowledgment form by {{ acknowledgment_deadline|date:"F d, Y" }}</li>
+            <li>Schedule initial meeting with supervisor by {{ initial_meeting_deadline|date:"F d, Y" }}</li>
+            <li>Prepare self-improvement plan draft for discussion</li>
+            <li>Review available training resources</li>
+            <li>Set up regular check-ins with mentor (if assigned)</li>
+        </ul>
+        
+        <a href="{{ hr_portal_url }}" class="button">Access HR Portal</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you have questions about this probation notice or need assistance, please contact your HR representative.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

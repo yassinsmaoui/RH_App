@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #2196F3;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .info-box {
+            background-color: #e7f3fe;
+            border-left: 6px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .change-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .arrow {
+            font-size: 24px;
+            color: #2196F3;
+        }
+        .department {
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            text-align: center;
+            width: 40%;
+        }
+        .effective-date {
+            background-color: #fff3cd;
+            border-left: 6px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Department Change Notification</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ user.first_name }},</p>
+        
+        <p>This email is to inform you about your department change in the HR Management System.</p>
+        
+        <div class="info-box">
+            <div class="change-details">
+                <div class="department">
+                    <strong>Previous Department</strong><br>
+                    {{ old_department.name }}
+                </div>
+                <div class="arrow">→</div>
+                <div class="department">
+                    <strong>New Department</strong><br>
+                    {{ new_department.name }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="effective-date">
+            <p><strong>Effective Date:</strong> {{ effective_date|default:today }}</p>
+        </div>
+        
+        <p><strong>What this means for you:</strong></p>
+        <ul>
+            <li>Your new department manager will be: {{ new_department.manager.get_full_name }}</li>
+            <li>You will now report to your new department manager</li>
+            <li>Your access permissions may be updated accordingly</li>
+            <li>Your team assignments will be adjusted</li>
+        </ul>
+        
+        <p>Please take note of the following:</p>
+        <ul>
+            <li>Update your email signature if necessary</li>
+            <li>Familiarize yourself with your new department's policies</li>
+            <li>Schedule a meeting with your new manager</li>
+            <li>Complete any pending tasks in your previous department</li>
+        </ul>
+        
+        <p>If you have any questions about this change, please contact the HR department or your new department manager.</p>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message, please do not reply directly to this email.</p>
+        <p>For any concerns, please contact the HR department.</p>
+        <p>&copy; {{ current_year }} HR Management System. All rights reserved.</p>
+    </div>
+</body>
+</html>

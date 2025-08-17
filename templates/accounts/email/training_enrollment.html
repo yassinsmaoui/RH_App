@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #4caf50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .training-details {
+            background-color: #e8f5e9;
+            border-left: 6px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .schedule {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .prerequisites {
+            background-color: #fff3e0;
+            border-left: 6px solid #f57c00;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            width: 40%;
+        }
+        .important-note {
+            background-color: #ffebee;
+            border-left: 6px solid #d32f2f;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .learning-objectives {
+            background-color: #f3e5f5;
+            border-left: 6px solid #9c27b0;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .resources {
+            background-color: #e0f2f1;
+            border-left: 6px solid #009688;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .assessment {
+            background-color: #fce4ec;
+            border-left: 6px solid #c2185b;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            padding: 3px;
+            margin: 5px 0;
+        }
+        .progress-bar-fill {
+            background-color: #4caf50;
+            height: 20px;
+            border-radius: 3px;
+            transition: width 500ms ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Training Enrollment Confirmation</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ employee.get_full_name }},</p>
+        
+        <p>You have been successfully enrolled in the following training program:</p>
+        
+        <div class="training-details">
+            <h2>Training Information</h2>
+            <table>
+                <tr>
+                    <th>Training Title</th>
+                    <td>{{ training.title }}</td>
+                </tr>
+                <tr>
+                    <th>Category</th>
+                    <td>{{ training.category }}</td>
+                </tr>
+                <tr>
+                    <th>Type</th>
+                    <td>{{ training.type }}</td>
+                </tr>
+                <tr>
+                    <th>Start Date</th>
+                    <td>{{ training.start_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>End Date</th>
+                    <td>{{ training.end_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Duration</th>
+                    <td>{{ training.duration }}</td>
+                </tr>
+                <tr>
+                    <th>Trainer</th>
+                    <td>{{ trainer.name }} ({{ trainer.position }})</td>
+                </tr>
+                {% if training.certification %}
+                <tr>
+                    <th>Certification</th>
+                    <td>{{ training.certification }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        
+        <div class="learning-objectives">
+            <h2>Learning Objectives</h2>
+            <ul>
+                {% for objective in learning_objectives %}
+                <li>{{ objective }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="schedule">
+            <h2>Training Schedule</h2>
+            {% for session in training_schedule %}
+            <div class="session">
+                <h3>Session {{ forloop.counter }}: {{ session.title }}</h3>
+                <table>
+                    <tr>
+                        <th>Date</th>
+                        <td>{{ session.date|date:"F d, Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Time</th>
+                        <td>{{ session.start_time|time:"g:i A" }} - {{ session.end_time|time:"g:i A" }} {{ session.timezone }}</td>
+                    </tr>
+                    {% if session.is_virtual %}
+                    <tr>
+                        <th>Platform</th>
+                        <td>{{ session.platform }}</td>
+                    </tr>
+                    <tr>
+                        <th>Meeting Link</th>
+                        <td><a href="{{ session.meeting_link }}">Join Session</a></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <th>Location</th>
+                        <td>{{ session.location }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+                <p><strong>Topics:</strong></p>
+                <ul>
+                    {% for topic in session.topics %}
+                    <li>{{ topic }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="prerequisites">
+            <h2>Prerequisites</h2>
+            <ul>
+                {% for prerequisite in prerequisites %}
+                <li>
+                    <strong>{{ prerequisite.title }}</strong>
+                    <p>{{ prerequisite.description }}</p>
+                    {% if prerequisite.completion_status %}
+                    <div class="progress-bar">
+                        <div class="progress-bar-fill" style="width: {{ prerequisite.completion_percentage }}%"></div>
+                    </div>
+                    <p><em>Status: {{ prerequisite.completion_status }} ({{ prerequisite.completion_percentage }}%)</em></p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="resources">
+            <h2>Training Resources</h2>
+            <ul>
+                {% for resource in training_resources %}
+                <li>
+                    <strong>{{ resource.title }}</strong>
+                    <p>{{ resource.description }}</p>
+                    {% if resource.link %}
+                    <p>Access: <a href="{{ resource.link }}">{{ resource.link_text }}</a></p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="assessment">
+            <h2>Assessment Information</h2>
+            <ul>
+                {% for assessment in assessments %}
+                <li>
+                    <strong>{{ assessment.type }}</strong>
+                    <p>{{ assessment.description }}</p>
+                    <p><strong>Due Date:</strong> {{ assessment.due_date|date:"F d, Y" }}</p>
+                    <p><strong>Passing Criteria:</strong> {{ assessment.passing_criteria }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="important-note">
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>Complete all prerequisites before the start date</li>
+                <li>Download required materials and software</li>
+                <li>Test your technical setup for virtual sessions</li>
+                <li>Attendance is mandatory for certification</li>
+                <li>Keep track of assignments and deadlines</li>
+            </ul>
+        </div>
+        
+        <p>Required Actions:</p>
+        <ul>
+            <li>Confirm your participation by {{ confirmation_deadline|date:"F d, Y" }}</li>
+            <li>Complete prerequisites by {{ prerequisites_deadline|date:"F d, Y" }}</li>
+            <li>Review training materials</li>
+            <li>Set up necessary software/tools</li>
+            <li>Add sessions to your calendar</li>
+        </ul>
+        
+        <a href="{{ training_portal_url }}" class="button">Access Training Portal</a>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated message from the HR Management System.</p>
+        <p>If you have any questions about the training program or need assistance, please contact the training coordinator.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>

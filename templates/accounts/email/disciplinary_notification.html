@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #d32f2f, #f44336);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .notice-section {
+            background-color: #ffebee;
+            border-left: 6px solid #d32f2f;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .action-section {
+            background-color: #e8f5e9;
+            border-left: 6px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .support-section {
+            background-color: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #1976d2, #2196f3);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .timeline {
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #d32f2f;
+        }
+        .timeline-item:after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 15px;
+            width: 2px;
+            height: calc(100% + 5px);
+            background-color: #d32f2f;
+        }
+        .timeline-item:last-child:after {
+            display: none;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .contact-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .important-note {
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Disciplinary Notice</h1>
+        <p>Date: {{ notice_date|date:"F d, Y" }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="notice-section">
+            <h2>Notice Details</h2>
+            <div class="info-card">
+                <h3>Employee Information</h3>
+                <ul>
+                    <li><strong>Name:</strong> {{ employee.get_full_name }}</li>
+                    <li><strong>Employee ID:</strong> {{ employee.id }}</li>
+                    <li><strong>Position:</strong> {{ employee.position }}</li>
+                    <li><strong>Department:</strong> {{ employee.department }}</li>
+                    <li><strong>Manager:</strong> {{ employee.manager }}</li>
+                </ul>
+                
+                <h3>Incident Information</h3>
+                <ul>
+                    <li><strong>Date of Incident:</strong> {{ incident_date|date:"F d, Y" }}</li>
+                    <li><strong>Type of Violation:</strong> {{ violation_type }}</li>
+                    <li><strong>Severity Level:</strong> {{ severity_level }}</li>
+                </ul>
+                
+                <div class="important-note">
+                    <h4>Description of Incident</h4>
+                    <p>{{ incident_description }}</p>
+                </div>
+                
+                <h3>Policies Violated</h3>
+                <ul>
+                    {% for policy in violated_policies %}
+                    <li>
+                        <strong>{{ policy.name }}:</strong> {{ policy.description }}
+                        <br>
+                        <small>Reference: <a href="{{ policy.link }}">View Policy</a></small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="notice-section">
+            <h2>Previous Incidents</h2>
+            <div class="info-card">
+                <ul class="timeline">
+                    {% for incident in previous_incidents %}
+                    <li class="timeline-item">
+                        <strong>{{ incident.date|date:"F d, Y" }}</strong>
+                        <br>
+                        Type: {{ incident.type }}
+                        <br>
+                        Action Taken: {{ incident.action }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="action-section">
+            <h2>Disciplinary Action</h2>
+            <div class="info-card">
+                <h3>Action Details</h3>
+                <ul>
+                    <li><strong>Type of Action:</strong> {{ action_type }}</li>
+                    <li><strong>Duration:</strong> {{ action_duration }}</li>
+                    <li><strong>Effective Date:</strong> {{ action_effective_date|date:"F d, Y" }}</li>
+                </ul>
+                
+                <div class="important-note">
+                    <h4>Impact of Action</h4>
+                    <ul>
+                        {% for impact in action_impacts %}
+                        <li>{{ impact }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-section">
+            <h2>Required Improvements</h2>
+            <div class="info-card">
+                <h3>Improvement Areas</h3>
+                <ul class="checklist">
+                    {% for area in improvement_areas %}
+                    <li class="checklist-item">
+                        <strong>{{ area.title }}</strong>
+                        <br>
+                        {{ area.description }}
+                        <br>
+                        <small>Timeline: {{ area.timeline }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Performance Metrics</h3>
+                <ul>
+                    {% for metric in performance_metrics %}
+                    <li>
+                        <strong>{{ metric.name }}:</strong>
+                        <br>
+                        Current: {{ metric.current }}
+                        <br>
+                        Expected: {{ metric.expected }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="support-section">
+            <h2>Support Resources</h2>
+            <div class="info-card">
+                <h3>Available Resources</h3>
+                <ul>
+                    {% for resource in support_resources %}
+                    <li>
+                        <strong>{{ resource.name }}:</strong>
+                        <br>
+                        {{ resource.description }}
+                        <br>
+                        <a href="{{ resource.link }}">Access Resource</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="contact-grid">
+                    <div class="contact-item">
+                        <h3>HR Support</h3>
+                        <p>{{ hr_support.name }}</p>
+                        <p>Email: {{ hr_support.email }}</p>
+                        <p>Phone: {{ hr_support.phone }}</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Manager</h3>
+                        <p>{{ manager.name }}</p>
+                        <p>Email: {{ manager.email }}</p>
+                        <p>Phone: {{ manager.phone }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="notice-section">
+            <h2>Next Steps</h2>
+            <div class="info-card">
+                <h3>Required Actions</h3>
+                <ol>
+                    <li>Review this notice thoroughly</li>
+                    <li>Schedule a meeting with your manager</li>
+                    <li>Sign the acknowledgment form</li>
+                    <li>Complete any required training</li>
+                    <li>Follow the improvement plan</li>
+                </ol>
+                
+                <div class="important-note">
+                    <h4>Important Deadlines</h4>
+                    <ul>
+                        {% for deadline in important_deadlines %}
+                        <li>
+                            <strong>{{ deadline.action }}:</strong>
+                            Due by {{ deadline.date|date:"F d, Y" }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <a href="{{ acknowledgment_form_link }}" class="button">Access Acknowledgment Form</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>This is an official communication from {{ company_name }}. Please treat this matter with utmost confidentiality.</p>
+        <p>If you believe this notice has been issued in error, please contact HR immediately.</p>
+        <p>&copy; {{ current_year }} {{ company_name }}. All rights reserved.</p>
+    </div>
+</body>
+</html>
