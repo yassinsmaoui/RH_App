@@ -1,61 +1,101 @@
-import api from './axios';
+import axios from './axios';
+import { User } from '../store/slices/authSlice';
 
-export interface User {
-  id: number;
-  email: string;
-  first_name: string;
-  last_name: string;
-  role: 'admin' | 'hr' | 'employee';
-  department: string;
-  phone_number: string;
-  date_joined: string;
-  is_active: boolean;
-}
-
-export interface LoginCredentials {
+export interface LoginRequest {
   email: string;
   password: string;
+  rememberMe?: boolean;
 }
 
-export interface RegisterData {
+export interface RegisterRequest {
   email: string;
   password: string;
-  password2: string;
-  first_name: string;
-  last_name: string;
-  role: 'admin' | 'hr' | 'employee';
-  department: string;
-  phone_number: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
 }
 
-export interface ChangePasswordData {
-  old_password: string;
-  new_password: string;
-  new_password2: string;
+export interface AuthResponse {
+  user: User;
+  token: string;
+  refreshToken: string;
+}
+
+export interface RefreshTokenResponse {
+  token: string;
+  refreshToken: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  password: string;
+  confirmPassword: string;
 }
 
 export const authAPI = {
-  login: (credentials: LoginCredentials) =>
-    api.post('/auth/login/', credentials),
-
-  register: (data: RegisterData) =>
-    api.post('/auth/register/', data),
-
-  logout: (refresh_token: string) =>
-    api.post('/auth/logout/', { refresh_token }),
-
-  refreshToken: (refresh: string) =>
-    api.post('/auth/token/refresh/', { refresh }),
-
-  getProfile: () =>
-    api.get('/auth/profile/'),
-
-  updateProfile: (data: Partial<User>) =>
-    api.patch('/auth/profile/', data),
-
-  changePassword: (data: ChangePasswordData) =>
-    api.put('/auth/change-password/', data),
-
-  getUsers: (params?: any) =>
-    api.get('/auth/users/', { params }),
+  login: (data: LoginRequest) => 
+    axios.post<AuthResponse>('/auth/login/', data),
+  
+  register: (data: RegisterRequest) => 
+    axios.post<AuthResponse>('/auth/register/', data),
+  
+  logout: () => 
+    axios.post('/auth/logout/'),
+  
+  refreshToken: () => 
+    axios.post<RefreshTokenResponse>('/auth/refresh/'),
+  
+  verifyToken: () => 
+    axios.get<{ user: User }>('/auth/verify/'),
+  
+  forgotPassword: (email: string) => 
+    axios.post('/auth/forgot-password/', { email }),
+  
+  resetPassword: (token: string, password: string) => 
+    axios.post('/auth/reset-password/', { token, password }),
+  
+  verifyEmail: (token: string) => 
+    axios.post('/auth/verify-email/', { token }),
+  
+  resendVerificationEmail: (email: string) => 
+    axios.post('/auth/resend-verification/', { email }),
+  
+  changePassword: (currentPassword: string, newPassword: string) => 
+    axios.post('/auth/change-password/', { 
+      currentPassword, 
+      newPassword 
+    }),
+  
+  enable2FA: () => 
+    axios.post<{ secret: string; qrCode: string }>('/auth/2fa/enable/'),
+  
+  disable2FA: (code: string) => 
+    axios.post('/auth/2fa/disable/', { code }),
+  
+  verify2FA: (code: string) => 
+    axios.post<AuthResponse>('/auth/2fa/verify/', { code }),
+  
+  updateProfile: (data: Partial<User>) => 
+    axios.patch<{ user: User }>('/auth/profile/', data),
+  
+  uploadAvatar: (file: File) => {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    return axios.post<{ avatarUrl: string }>('/auth/avatar/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+  
+  deleteAccount: (password: string) => 
+    axios.post('/auth/delete-account/', { password }),
+  
+  getSessions: () => 
+    axios.get<{ sessions: any[] }>('/auth/sessions/'),
+  
+  revokeSession: (sessionId: string) => 
+    axios.delete(`/auth/sessions/${sessionId}/`),
 };
+
+export default authAPI;

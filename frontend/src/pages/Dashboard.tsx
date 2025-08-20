@@ -1,321 +1,454 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box,
+  Grid,
+  Paper,
+  Typography,
   Card,
   CardContent,
-  Typography,
-  CircularProgress,
+  Avatar,
   Chip,
+  LinearProgress,
+  IconButton,
+  Button,
   List,
   ListItem,
+  ListItemAvatar,
   ListItemText,
-  ListItemIcon,
-  Avatar,
-  Button,
-  Alert,
-  Stack,
+  Divider,
+  useTheme,
 } from '@mui/material';
 import {
-  People as PeopleIcon,
-  EventNote as EventNoteIcon,
-  AccessTime as AccessTimeIcon,
-  AttachMoney as AttachMoneyIcon,
-  Notifications as NotificationsIcon,
-  BeachAccess as BeachAccessIcon,
-  Work as WorkIcon,
+  People,
+  EventNote,
+  AttachMoney,
+  TrendingUp,
+  AccessTime,
+  ArrowUpward,
+  ArrowDownward,
+  MoreVert,
+  Refresh,
+  CalendarToday,
+  CheckCircle,
+  Cancel,
+  Schedule,
+  Assignment,
+  EmojiEvents,
+  Notifications,
 } from '@mui/icons-material';
+import { motion } from 'framer-motion';
+import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from 'chart.js';
+import { useAppSelector } from '../store/hooks';
 
-interface DashboardStats {
-  totalEmployees: number;
-  activeEmployees: number;
-  presentToday: number;
-  attendanceRate: number;
-  pendingLeaves: number;
-  openPositions: number;
-}
-
-interface Activity {
-  id: number;
-  type: 'leave' | 'attendance' | 'employee' | 'alert';
-  message: string;
-  timestamp: string;
-  priority: 'high' | 'medium' | 'low';
-}
-
-interface NotificationStats {
-  total: number;
-  unread: number;
-}
-
-const StatCard: React.FC<{
-  title: string;
-  value: number;
-  icon: React.ReactNode;
-  color: string;
-  subtitle?: string;
-}> = ({ title, value, icon, color, subtitle }) => (
-  <Card>
-    <CardContent>
-      <Box display="flex" alignItems="center" justifyContent="space-between">
-        <Box>
-          <Typography color="textSecondary" gutterBottom variant="overline">
-            {title}
-          </Typography>
-          <Typography variant="h4" component="div">
-            {value}
-          </Typography>
-          {subtitle && (
-            <Typography variant="body2" color="textSecondary">
-              {subtitle}
-            </Typography>
-          )}
-        </Box>
-        <Avatar
-          sx={{
-            backgroundColor: color,
-            height: 56,
-            width: 56,
-          }}
-        >
-          {icon}
-        </Avatar>
-      </Box>
-    </CardContent>
-  </Card>
+// Register ChartJS components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
 );
 
-const ActivityIcon: React.FC<{ type: string }> = ({ type }) => {
-  switch (type) {
-    case 'leave':
-      return <BeachAccessIcon />;
-    case 'attendance':
-      return <AccessTimeIcon />;
-    case 'employee':
-      return <PeopleIcon />;
-    default:
-      return <NotificationsIcon />;
-  }
-};
-
-const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case 'high':
-      return 'error';
-    case 'medium':
-      return 'warning';
-    case 'low':
-      return 'success';
-    default:
-      return 'default';
-  }
-};
+interface StatCard {
+  title: string;
+  value: string | number;
+  change: number;
+  icon: React.ReactNode;
+  color: string;
+}
 
 const Dashboard: React.FC = () => {
-  // Code original restauré
-  const [stats, setStats] = useState<DashboardStats>({
-    totalEmployees: 0,
-    activeEmployees: 0,
-    presentToday: 0,
-    attendanceRate: 0,
-    pendingLeaves: 0,
-    openPositions: 0,
-  });
-  
-  const [notificationStats, setNotificationStats] = useState<NotificationStats>({
-    total: 0,
-    unread: 0,
-  });
+  const theme = useTheme();
+  const { user } = useAppSelector((state) => state.auth);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [recentActivities, setRecentActivities] = useState<Activity[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 2000);
+  };
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
-        
-        // Simulate API calls for now
-        setStats({
-          totalEmployees: 125,
-          activeEmployees: 118,
-          presentToday: 105,
-          attendanceRate: 89,
-          pendingLeaves: 12,
-          openPositions: 5,
-        });
+  const statCards: StatCard[] = [
+    {
+      title: 'Total Employees',
+      value: 248,
+      change: 12,
+      icon: <People />,
+      color: '#667eea',
+    },
+    {
+      title: 'On Leave Today',
+      value: 8,
+      change: -2,
+      icon: <EventNote />,
+      color: '#f59e0b',
+    },
+    {
+      title: 'Pending Requests',
+      value: 15,
+      change: 5,
+      icon: <Assignment />,
+      color: '#10b981',
+    },
+    {
+      title: 'Payroll This Month',
+      value: '$125,430',
+      change: 8,
+      icon: <AttachMoney />,
+      color: '#ef4444',
+    },
+  ];
 
-        setNotificationStats({
-          total: 25,
-          unread: 8,
-        });
+  const attendanceData = {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [
+      {
+        label: 'Present',
+        data: [95, 92, 97, 94, 96, 85, 0],
+        backgroundColor: 'rgba(102, 126, 234, 0.8)',
+        borderColor: 'rgba(102, 126, 234, 1)',
+        borderWidth: 2,
+        borderRadius: 8,
+      },
+      {
+        label: 'Absent',
+        data: [5, 8, 3, 6, 4, 15, 0],
+        backgroundColor: 'rgba(239, 68, 68, 0.8)',
+        borderColor: 'rgba(239, 68, 68, 1)',
+        borderWidth: 2,
+        borderRadius: 8,
+      },
+    ],
+  };
 
-        setRecentActivities([
-          {
-            id: 1,
-            type: 'leave',
-            message: 'Marie Dubois a demandé un congé maladie',
-            timestamp: new Date().toISOString(),
-            priority: 'medium',
-          },
-          {
-            id: 2,
-            type: 'employee',
-            message: 'Nouvel employé ajouté: Jean Martin',
-            timestamp: new Date(Date.now() - 86400000).toISOString(),
-            priority: 'low',
-          },
-          {
-            id: 3,
-            type: 'attendance',
-            message: 'Retard signalé pour Pierre Durand',
-            timestamp: new Date(Date.now() - 172800000).toISOString(),
-            priority: 'high',
-          },
-        ]);
-      } catch (err) {
-        setError('Erreur lors du chargement des données du tableau de bord');
-        console.error('Dashboard data fetch error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const departmentData = {
+    labels: ['Engineering', 'Sales', 'Marketing', 'HR', 'Finance', 'Operations'],
+    datasets: [
+      {
+        data: [65, 45, 35, 20, 25, 38],
+        backgroundColor: [
+          '#667eea',
+          '#764ba2',
+          '#f59e0b',
+          '#10b981',
+          '#ef4444',
+          '#3b82f6',
+        ],
+        borderWidth: 0,
+      },
+    ],
+  };
 
-    fetchDashboardData();
-  }, []);
+  const performanceData = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    datasets: [
+      {
+        label: 'Average Performance Score',
+        data: [3.2, 3.5, 3.8, 3.6, 4.0, 4.2],
+        borderColor: '#667eea',
+        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+        tension: 0.4,
+        fill: true,
+      },
+    ],
+  };
 
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-        <CircularProgress />
-      </Box>
-    );
-  }
+  const recentActivities = [
+    {
+      id: 1,
+      user: 'John Doe',
+      action: 'submitted a leave request',
+      time: '2 minutes ago',
+      type: 'leave',
+      avatar: 'JD',
+    },
+    {
+      id: 2,
+      user: 'Jane Smith',
+      action: 'completed performance review',
+      time: '15 minutes ago',
+      type: 'performance',
+      avatar: 'JS',
+    },
+    {
+      id: 3,
+      user: 'Mike Johnson',
+      action: 'checked in',
+      time: '1 hour ago',
+      type: 'attendance',
+      avatar: 'MJ',
+    },
+    {
+      id: 4,
+      user: 'Sarah Wilson',
+      action: 'uploaded training certificate',
+      time: '2 hours ago',
+      type: 'training',
+      avatar: 'SW',
+    },
+  ];
 
-  if (error) {
-    return (
-      <Alert severity="error" sx={{ mt: 2 }}>
-        {error}
-      </Alert>
-    );
-  }
+  const upcomingEvents = [
+    { id: 1, title: 'Team Meeting', date: 'Today, 3:00 PM', type: 'meeting' },
+    { id: 2, title: 'Performance Reviews', date: 'Tomorrow', type: 'review' },
+    { id: 3, title: 'Payroll Processing', date: 'Dec 25', type: 'payroll' },
+    { id: 4, title: 'Holiday - Christmas', date: 'Dec 25', type: 'holiday' },
+  ];
 
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Tableau de Bord RH
-      </Typography>
-      
-      {/* Stats Cards */}
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ mb: 4 }}>
-        <StatCard
-          title="Total Employés"
-          value={stats.totalEmployees}
-          icon={<PeopleIcon />}
-          color="#1976d2"
-          subtitle={`${stats.activeEmployees} actifs`}
-        />
-        <StatCard
-          title="Présents Aujourd'hui"
-          value={stats.presentToday}
-          icon={<EventNoteIcon />}
-          color="#388e3c"
-          subtitle={`${stats.attendanceRate}% taux`}
-        />
-        <StatCard
-          title="Congés en Attente"
-          value={stats.pendingLeaves}
-          icon={<BeachAccessIcon />}
-          color="#f57c00"
-          subtitle="En attente d'approbation"
-        />
-        <StatCard
-          title="Postes Ouverts"
-          value={stats.openPositions}
-          icon={<WorkIcon />}
-          color="#7b1fa2"
-          subtitle="Annonces actives"
-        />
-        <StatCard
-          title="Notifications"
-          value={notificationStats.total}
-          icon={<NotificationsIcon />}
-          color="#d32f2f"
-          subtitle={`${notificationStats.unread} non lues`}
-        />
-      </Stack>
+    <Box>
+      {/* Header */}
+      <Box sx={{ mb: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Box>
+            <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
+              Welcome back, {user?.firstName}! 👋
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Here's what's happening in your organization today
+            </Typography>
+          </Box>
+          <Button
+            variant="outlined"
+            startIcon={<Refresh />}
+            onClick={handleRefresh}
+            disabled={refreshing}
+          >
+            Refresh
+          </Button>
+        </Box>
+      </Box>
 
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-        {/* Recent Activities */}
-        <Card sx={{ flex: 1 }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Activités Récentes
+      {/* Stat Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {statCards.map((stat, index) => (
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <Card
+                sx={{
+                  p: 3,
+                  height: '100%',
+                  background: `linear-gradient(135deg, ${stat.color}15 0%, ${stat.color}05 100%)`,
+                  border: `1px solid ${stat.color}20`,
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Avatar
+                    sx={{
+                      bgcolor: stat.color,
+                      width: 48,
+                      height: 48,
+                      mr: 2,
+                    }}
+                  >
+                    {stat.icon}
+                  </Avatar>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      {stat.title}
+                    </Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                      {stat.value}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  {stat.change > 0 ? (
+                    <ArrowUpward sx={{ color: '#10b981', fontSize: 20, mr: 0.5 }} />
+                  ) : (
+                    <ArrowDownward sx={{ color: '#ef4444', fontSize: 20, mr: 0.5 }} />
+                  )}
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: stat.change > 0 ? '#10b981' : '#ef4444',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {Math.abs(stat.change)}%
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+                    vs last month
+                  </Typography>
+                </Box>
+              </Card>
+            </motion.div>
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Charts Row */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={8}>
+          <Paper sx={{ p: 3, height: 400 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                Weekly Attendance
+              </Typography>
+              <IconButton size="small">
+                <MoreVert />
+              </IconButton>
+            </Box>
+            <Bar
+              data={attendanceData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    display: true,
+                    position: 'bottom',
+                  },
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    max: 100,
+                  },
+                },
+              }}
+            />
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 3, height: 400 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                Department Distribution
+              </Typography>
+              <IconButton size="small">
+                <MoreVert />
+              </IconButton>
+            </Box>
+            <Box sx={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Doughnut
+                data={departmentData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      display: true,
+                      position: 'bottom',
+                    },
+                  },
+                }}
+              />
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* Bottom Row */}
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 3, height: 400 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
+              Recent Activities
             </Typography>
             <List>
-              {recentActivities.map((activity) => (
-                <ListItem key={activity.id} divider>
-                  <ListItemIcon>
-                    <ActivityIcon type={activity.type} />
-                  </ListItemIcon>
+              {recentActivities.map((activity, index) => (
+                <React.Fragment key={activity.id}>
+                  <ListItem alignItems="flex-start" sx={{ px: 0 }}>
+                    <ListItemAvatar>
+                      <Avatar sx={{ bgcolor: '#667eea' }}>{activity.avatar}</Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={
+                        <Typography variant="body2">
+                          <strong>{activity.user}</strong> {activity.action}
+                        </Typography>
+                      }
+                      secondary={activity.time}
+                    />
+                  </ListItem>
+                  {index < recentActivities.length - 1 && <Divider variant="inset" component="li" />}
+                </React.Fragment>
+              ))}
+            </List>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 3, height: 400 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
+              Upcoming Events
+            </Typography>
+            <List>
+              {upcomingEvents.map((event) => (
+                <ListItem key={event.id} sx={{ px: 0 }}>
+                  <ListItemAvatar>
+                    <Avatar sx={{ bgcolor: '#f59e0b' }}>
+                      <CalendarToday />
+                    </Avatar>
+                  </ListItemAvatar>
                   <ListItemText
-                    primary={activity.message}
-                    secondary={new Date(activity.timestamp).toLocaleDateString('fr-FR')}
+                    primary={event.title}
+                    secondary={event.date}
                   />
                   <Chip
-                    label={activity.priority}
-                    color={getPriorityColor(activity.priority) as any}
+                    label={event.type}
                     size="small"
+                    sx={{ textTransform: 'capitalize' }}
                   />
                 </ListItem>
               ))}
             </List>
-          </CardContent>
-        </Card>
+          </Paper>
+        </Grid>
 
-        {/* Quick Actions */}
-        <Card sx={{ flex: 1 }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Actions Rapides
-            </Typography>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ flexWrap: 'wrap' }}>
-              <Button
-                variant="outlined"
-                startIcon={<PeopleIcon />}
-                href="/employees"
-                sx={{ flex: 1, minWidth: '200px' }}
-              >
-                Voir Employés
-              </Button>
-              <Button
-                variant="outlined"
-                startIcon={<EventNoteIcon />}
-                href="/attendance"
-                sx={{ flex: 1, minWidth: '200px' }}
-              >
-                Présences
-              </Button>
-              <Button
-                variant="outlined"
-                startIcon={<BeachAccessIcon />}
-                href="/leave"
-                sx={{ flex: 1, minWidth: '200px' }}
-              >
-                Demandes de Congé
-              </Button>
-              <Button
-                variant="outlined"
-                startIcon={<AttachMoneyIcon />}
-                href="/payroll"
-                sx={{ flex: 1, minWidth: '200px' }}
-              >
-                Paie
-              </Button>
-            </Stack>
-          </CardContent>
-        </Card>
-      </Stack>
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 3, height: 400 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                Performance Trend
+              </Typography>
+              <IconButton size="small">
+                <MoreVert />
+              </IconButton>
+            </Box>
+            <Line
+              data={performanceData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    max: 5,
+                  },
+                },
+              }}
+            />
+          </Paper>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
