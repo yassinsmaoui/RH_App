@@ -1,7 +1,7 @@
 from django.db import models
+from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
-from employees.models import Employee
 
 class PayrollPeriod(models.Model):
     PERIOD_TYPE_CHOICES = (
@@ -22,7 +22,7 @@ class PayrollPeriod(models.Model):
     end_date = models.DateField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
     processed_by = models.ForeignKey(
-        Employee,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         related_name='processed_payrolls'
@@ -48,7 +48,7 @@ class PayrollRecord(models.Model):
     )
 
     payroll_period = models.ForeignKey(PayrollPeriod, on_delete=models.CASCADE, related_name='payroll_records')
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='payroll_records')
+    employee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='payroll_records')
     basic_salary = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     overtime_hours = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     overtime_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0)

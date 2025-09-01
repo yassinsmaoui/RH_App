@@ -1,6 +1,8 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 from .models import LeaveType, LeaveBalance, LeaveRequest
-from employees.serializers import EmployeeListSerializer
+
+User = get_user_model()
 
 class LeaveTypeSerializer(serializers.ModelSerializer):
     class Meta:

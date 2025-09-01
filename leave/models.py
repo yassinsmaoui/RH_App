@@ -1,6 +1,6 @@
 from django.db import models
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from employees.models import Employee
 
 class LeaveType(models.Model):
     name = models.CharField(max_length=100)
@@ -19,7 +19,7 @@ class LeaveType(models.Model):
         verbose_name_plural = _('leave types')
 
 class LeaveBalance(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='leave_balances')
+    employee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='leave_balances')
     leave_type = models.ForeignKey(LeaveType, on_delete=models.CASCADE)
     year = models.PositiveIntegerField()
     total_days = models.PositiveIntegerField()
@@ -48,7 +48,7 @@ class LeaveRequest(models.Model):
         ('cancelled', 'Cancelled'),
     )
 
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='leave_requests')
+    employee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='leave_requests')
     leave_type = models.ForeignKey(LeaveType, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -56,7 +56,7 @@ class LeaveRequest(models.Model):
     reason = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     approved_by = models.ForeignKey(
-        Employee,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

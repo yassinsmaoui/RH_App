@@ -1,11 +1,13 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 from datetime import datetime, timedelta
 from leave.models import LeaveRequest
 from performance.models import PerformanceReview
-from employees.models import Employee
 from .models import Notification, NotificationType
+
+User = get_user_model()
 
 @receiver(post_save, sender=LeaveRequest)
 def notify_leave_request(sender, instance, created, **kwargs):
@@ -27,8 +29,8 @@ def notify_leave_request(sender, instance, created, **kwargs):
                 Notification.objects.create(
                     notification_type=notification_type,
                     recipient=hr_user,
-                    subject=f"New Leave Request from {instance.employee.user.get_full_name()}",
-                    message=f"{instance.employee.user.get_full_name()} has requested {instance.leave_type.name} from {instance.start_date} to {instance.end_date}."
+                    subject=f"New Leave Request from {instance.employee.get_full_name()}",
+                    message=f"{instance.employee.get_full_name()} has requested {instance.leave_type.name} from {instance.start_date} to {instance.end_date}."
                 )
         except NotificationType.DoesNotExist:
             pass

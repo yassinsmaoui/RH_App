@@ -1,7 +1,7 @@
 from django.db import models
+from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext_lazy as _
-from employees.models import Employee
 
 class PerformanceCriteria(models.Model):
     CATEGORY_CHOICES = (
@@ -41,9 +41,9 @@ class PerformanceReview(models.Model):
         ('acknowledged', 'Acknowledged'),
     )
 
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='performance_reviews')
+    employee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='performance_reviews')
     reviewer = models.ForeignKey(
-        Employee,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         related_name='reviews_given'
@@ -111,7 +111,7 @@ class Goal(models.Model):
         ('high', 'High'),
     )
 
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='goals')
+    employee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='goals')
     title = models.CharField(max_length=200)
     description = models.TextField()
     start_date = models.DateField()

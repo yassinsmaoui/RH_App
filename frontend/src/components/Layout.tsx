@@ -135,7 +135,7 @@ const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
   
   const { user } = useAppSelector((state) => state.auth);
-  const notifications = useAppSelector((state) => state.notifications?.items || []);
+  const notifications = useAppSelector((state) => (state as any).notifications?.items || []);
   
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -192,7 +192,7 @@ const Layout: React.FC = () => {
     return item.roles.some((role) => user?.roles?.includes(role));
   };
 
-  const unreadNotifications = notifications.filter((n) => !n.read).length;
+  const unreadNotifications = notifications.filter((n: { read: any; }) => !n.read).length;
 
   const drawer = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -370,7 +370,6 @@ const Layout: React.FC = () => {
 
       <NotificationMenu
         anchorEl={notificationAnchor}
-        open={Boolean(notificationAnchor)}
         onClose={() => setNotificationAnchor(null)}
       />
 

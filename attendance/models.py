@@ -1,7 +1,7 @@
 from django.db import models
+from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from employees.models import Employee
 
 class Attendance(models.Model):
     ATTENDANCE_TYPE_CHOICES = (
@@ -11,7 +11,7 @@ class Attendance(models.Model):
         ('work_from_home', 'Work From Home'),
     )
 
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='attendances')
+    employee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='attendances')
     date = models.DateField(default=timezone.now)
     check_in = models.DateTimeField(null=True, blank=True)
     check_out = models.DateTimeField(null=True, blank=True)
@@ -21,7 +21,7 @@ class Attendance(models.Model):
     notes = models.TextField(blank=True)
     is_approved = models.BooleanField(default=False)
     approved_by = models.ForeignKey(
-        Employee,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

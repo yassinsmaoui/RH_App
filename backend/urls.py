@@ -22,11 +22,11 @@ urlpatterns = [
     # API endpoints
     path('api/auth/', include('accounts.urls')),
     path('api/employees/', include('employees.urls')),
-    path('api/attendance/', include('attendance.urls')),
-    path('api/leave/', include('leave.urls')),
-    path('api/performance/', include('performance.urls')),
-    path('api/payroll/', include('payroll.urls')),
-    path('api/notifications/', include('notifications.urls')),
+    # path('api/attendance/', include('attendance.urls')),
+    # path('api/leave/', include('leave.urls')),
+    # path('api/performance/', include('performance.urls')),
+    # path('api/payroll/', include('payroll.urls')),
+    # path('api/notifications/', include('notifications.urls')),
 ]
 
 # Serve media files in development

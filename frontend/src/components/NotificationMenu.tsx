@@ -27,10 +27,13 @@ import {
 import { notificationAPI, type Notification } from '../api';
 
 interface NotificationMenuProps {
+  anchorEl?: HTMLElement | null;
+  open?: boolean;
+  onClose?: () => void;
   onNotificationClick?: (notification: Notification) => void;
 }
 
-const NotificationMenu: React.FC<NotificationMenuProps> = ({ onNotificationClick }) => {
+const NotificationMenu: React.FC<NotificationMenuProps> = ({ anchorEl: controlledAnchorEl, open: controlledOpen, onClose: controlledOnClose, onNotificationClick }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -61,11 +64,17 @@ const NotificationMenu: React.FC<NotificationMenuProps> = ({ onNotificationClick
   };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    if (controlledAnchorEl === undefined) {
+      setAnchorEl(event.currentTarget);
+    }
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    if (controlledOnClose) {
+      controlledOnClose();
+    } else {
+      setAnchorEl(null);
+    }
   };
 
   const handleNotificationClick = async (notification: Notification) => {
@@ -153,8 +162,8 @@ const NotificationMenu: React.FC<NotificationMenuProps> = ({ onNotificationClick
       </IconButton>
 
       <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
+        anchorEl={controlledAnchorEl !== undefined ? controlledAnchorEl : anchorEl}
+        open={controlledOpen !== undefined ? controlledOpen : Boolean(controlledAnchorEl !== undefined ? controlledAnchorEl : anchorEl)}
         onClose={handleClose}
         PaperProps={{
           sx: {

@@ -1,5 +1,5 @@
 import axios from './axios';
-import { User } from '../store/slices/authSlice';
+import type { User } from '../store/slices/authSlice';
 
 export interface LoginRequest {
   email: string;
@@ -73,6 +73,10 @@ export const authAPI = {
     axios.post('/auth/2fa/disable/', { code }),
   
   verify2FA: (code: string) => 
+    axios.post<AuthResponse>('/auth/2fa/verify/', { code }),
+
+  // Alias for compatibility with authSlice usage
+  verifyTwoFactor: (code: string) => 
     axios.post<AuthResponse>('/auth/2fa/verify/', { code }),
   
   updateProfile: (data: Partial<User>) => 
